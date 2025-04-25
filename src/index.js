@@ -1,13 +1,18 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { Provider } from "react-redux";
+import store from "./app/store/store";
+import { BrowserRouter } from "react-router-dom"; 
+import "./assets/styles/index.css";
+import "@ant-design/v5-patch-for-react-19";
+import "antd/dist/reset.css";
 
-const container = document.getElementById('root');
-const root = createRoot(container);
-
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-    // <React.StrictMode>
-            <App />
-    // </React.StrictMode> 
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>
 );
