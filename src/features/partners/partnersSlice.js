@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { mockPartners } from "../../devData/mockData";
 
 const initialState = {
-  partners: [],
+  partners: mockPartners,
 };
 
 const partnersSlice = createSlice({

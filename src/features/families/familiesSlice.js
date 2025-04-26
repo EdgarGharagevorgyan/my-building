@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { mockFamilies } from "../../devData/mockData";
 
 const initialState = {
-  families: [],
+  families: mockFamilies,
 };
 
 const familiesSlice = createSlice({

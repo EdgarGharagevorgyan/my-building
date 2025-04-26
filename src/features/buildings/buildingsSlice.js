@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { mockBuildings } from "../../devData/mockData";
 
 const initialState = {
-  buildings: [],
+  buildings: mockBuildings,
 };
 
 const buildingsSlice = createSlice({

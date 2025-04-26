@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Card, Row, Col } from "antd";
 import { setDashboardData } from "../features/dashboard/dashboardSlice";

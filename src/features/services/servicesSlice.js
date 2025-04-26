@@ -1,7 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { mockServices } from "../../devData/mockData";
 
 const initialState = {
-  services: [],
+  services: mockServices,
 };
 
 const servicesSlice = createSlice({

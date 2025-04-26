@@ -1,4 +1,3 @@
-import React from "react";
 import { Form, Input, Modal, Button } from "antd";
 
 const DynamicForm = ({ visible, onCancel, onSubmit, initialValues, mode }) => {

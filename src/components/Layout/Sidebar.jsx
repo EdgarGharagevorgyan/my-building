@@ -1,4 +1,3 @@
-import React from "react";
 import { Flex, Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
 import { LayoutDashboard, Building2, Users, HandPlatter, Handshake } from "lucide-react";

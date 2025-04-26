@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Layout } from "antd";
 import { useLocation } from "react-router-dom";
 import Header from "./Header";
