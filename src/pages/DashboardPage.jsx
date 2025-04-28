@@ -1,12 +1,11 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Card, Row, Col } from "antd";
-import { setDashboardData } from "../features/dashboard/dashboardSlice";
 
 const DashboardPage = () => {
-  const dispatch = useDispatch();
-  const { totalBuildings, totalFamilies, totalServices, totalPartners } = useSelector(
-    (state) => state.dashboard
-  );
+  const totalBuildings = useSelector((state) => state.buildings.buildings.length);
+  const totalFamilies = useSelector((state) => state.families.families.length);
+  const totalServices = useSelector((state) => state.services.services.length);
+  const totalPartners = useSelector((state) => state.partners.partners.length);
 
   return (
     <div style={{ padding: 24 }}>

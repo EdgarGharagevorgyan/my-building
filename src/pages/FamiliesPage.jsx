@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Table, Button, Popconfirm, Space } from "antd";
+import { Table, Button, Space, Popconfirm, Input } from "antd";
 import { addFamily, updateFamily, deleteFamily } from "../features/families/familiesSlice";
 import { useNavigate } from "react-router-dom";
 import DynamicForm from "../components/DynamicForm";
@@ -13,6 +13,11 @@ const FamiliesPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formMode, setFormMode] = useState("add");
   const [currentFamily, setCurrentFamily] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredFamilies = families.filter((family) =>
+    family.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const columns = [
     {
@@ -40,12 +45,18 @@ const FamiliesPage = () => {
             title="Are you sure to delete this family?"
             onConfirm={(e) => {
               e.stopPropagation(); // Prevent row click
-              dispatch(deleteFamily(record.id));
+              dispatch(deleteFamily(record.id)); // Dispatch the delete action
             }}
             okText="Yes"
             cancelText="No"
           >
-            <Button type="danger">Delete</Button>
+            <Button
+              type="primary"
+              danger
+              onClick={(e) => e.stopPropagation()} // Prevent row click
+            >
+              Delete
+            </Button>
           </Popconfirm>
         </Space>
       ),
@@ -54,6 +65,7 @@ const FamiliesPage = () => {
 
   const handleAddFamily = () => {
     setFormMode("add");
+    setCurrentFamily(null);
     setIsModalVisible(true);
   };
 
@@ -72,12 +84,19 @@ const FamiliesPage = () => {
 
   return (
     <div style={{ padding: 24 }}>
-      <Button onClick={handleAddFamily} type="primary" style={{ marginBottom: 16 }}>
-        Add Family
-      </Button>
+      <Space>
+        <Input.Search
+          placeholder="Search Families"
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{ width: 200, marginBottom: 16 }}
+        />
+        <Button onClick={handleAddFamily} type="primary" style={{ marginBottom: 16 }}>
+          Add Family
+        </Button>
+      </Space>
       <Table
         columns={columns}
-        dataSource={families}
+        dataSource={filteredFamilies}
         onRow={(record) => ({
           onClick: () => navigate(`/families/${record.id}`),
         })}
@@ -87,8 +106,18 @@ const FamiliesPage = () => {
         visible={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleFormSubmit}
-        initialValues={currentFamily || { name: "" }}
+        initialValues={currentFamily || { name: "", members: [] }}
         mode={formMode}
+        title={formMode === "edit" ? "Edit Family" : "Add Family"} // Dynamic title
+        fields={[
+          { name: "name", label: "Family Name", rules: [{ required: true }] },
+          {
+            name: "members",
+            label: "Members",
+            type: "list",
+            nested: true,
+          },
+        ]}
       />
     </div>
   );
