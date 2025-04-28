@@ -1,17 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Card, Button } from "antd";
+import { Card, Button, Table, Space, Popconfirm } from "antd";
 import { useState } from "react";
 import DynamicForm from "../components/DynamicForm";
-import { updateFamily } from "../features/families/familiesSlice";
+import { updateFamily, deleteFamily } from "../features/families/familiesSlice";
 
 const FamilyDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const family = useSelector((state) =>
-    state.families.families.find((f) => f.id === parseInt(id))
-  );
+  const family = useSelector((state) => state.families.families.find((f) => f.id === parseInt(id)));
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -22,26 +20,98 @@ const FamilyDetailsPage = () => {
   const handleEdit = (values) => {
     dispatch(updateFamily({ ...family, ...values }));
     setIsModalVisible(false);
-    navigate(`/families`); // Navigate back to the table after editing
   };
+
+  const handleDelete = () => {
+    dispatch(deleteFamily(family.id));
+    navigate(`/families`);
+  };
+
+  const columns = [
+    {
+      title: "Full Name",
+      dataIndex: "fullName",
+      key: "fullName",
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      key: "age",
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+    },
+  ];
 
   return (
     <div style={{ padding: 24 }}>
-      <Card title={family.name} bordered={false}>
-        <p>
-          <strong>Members:</strong> {family.members.length}
-        </p>
-        <Button type="primary" onClick={() => navigate(`/families`)}>
-          Return to Table
-        </Button>
-        <Button
-          type="default"
-          style={{ marginLeft: 8 }}
-          onClick={() => setIsModalVisible(true)} // Open the edit modal
-        >
-          Edit
-        </Button>
+      <Table
+        dataSource={[
+          {
+            key: family.id,
+            name: family.name,
+            createdAt: family.createdAt,
+            updatedAt: family.updatedAt,
+          },
+        ]}
+        columns={[
+          {
+            title: "Family Name",
+            dataIndex: "name",
+            key: "name",
+          },
+          {
+            title: "Created At",
+            dataIndex: "createdAt",
+            key: "createdAt",
+          },
+          {
+            title: "Updated At",
+            dataIndex: "updatedAt",
+            key: "updatedAt",
+          },
+        ]}
+        pagination={false}
+        style={{ marginBottom: 24 }}
+      />
+
+      <Card title="Members" bordered={false}>
+        <Table
+          dataSource={family.members.map((member, index) => ({
+            key: index,
+            fullName: member.fullName,
+            age: member.age,
+            role: member.role,
+          }))}
+          columns={columns}
+          pagination={false}
+        />
+        <div style={{ marginTop: 16 }}>
+          <Space>
+            <Button type="primary" onClick={() => setIsModalVisible(true)}>
+              Edit
+            </Button>
+            <Popconfirm
+              title="Are you sure you want to delete this family?"
+              onConfirm={handleDelete}
+              okText="Yes"
+              cancelText="No"
+            >
+              <Button type="default" danger>
+                Delete
+              </Button>
+            </Popconfirm>
+          </Space>
+        </div>
       </Card>
+
+      <div style={{ marginTop: 16 }}>
+        <Button type="primary" onClick={() => navigate("/families")}>
+          Return to Families
+        </Button>
+      </div>
 
       <DynamicForm
         visible={isModalVisible}
@@ -49,11 +119,18 @@ const FamilyDetailsPage = () => {
         onSubmit={handleEdit}
         initialValues={{
           name: family.name,
+          members: family.members,
         }}
         mode="edit"
         title="Edit Family"
         fields={[
           { name: "name", label: "Family Name", rules: [{ required: true }] },
+          {
+            name: "members",
+            label: "Members",
+            type: "list",
+            nested: true,
+          },
         ]}
       />
     </div>

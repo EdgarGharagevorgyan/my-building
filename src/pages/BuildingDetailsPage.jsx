@@ -46,9 +46,13 @@ const BuildingDetailsPage = () => {
       floor.apartments?.map((apartment) => {
         // Handle both object and ID cases for family and service
         const familyId =
-          typeof apartment.family === "object" ? apartment.family.id : apartment.family;
+          apartment.family && typeof apartment.family === "object"
+            ? apartment.family.id
+            : apartment.family;
         const serviceId =
-          typeof apartment.service === "object" ? apartment.service.id : apartment.service;
+          apartment.service && typeof apartment.service === "object"
+            ? apartment.service.id
+            : apartment.service;
 
         const family = families.find((f) => f.id === familyId) || null; // Resolve family by ID
         const service = services.find((s) => s.id === serviceId) || null; // Resolve service by ID
