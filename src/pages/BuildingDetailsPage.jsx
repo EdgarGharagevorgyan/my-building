@@ -114,8 +114,14 @@ const BuildingDetailsPage = () => {
         ...floor,
         apartments: floor.apartments?.map((apartment) => ({
           ...apartment,
-          family: typeof apartment.family === "object" ? apartment.family.id : apartment.family, // Save family ID
-          service: typeof apartment.service === "object" ? apartment.service.id : apartment.service, // Save service ID
+          family:
+            apartment.family && typeof apartment.family === "object"
+              ? apartment.family.id
+              : apartment.family, // Save family ID or null
+          service:
+            apartment.service && typeof apartment.service === "object"
+              ? apartment.service.id
+              : apartment.service, // Save service ID or null
         })),
       })),
     };
