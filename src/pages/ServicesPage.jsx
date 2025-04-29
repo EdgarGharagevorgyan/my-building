@@ -22,6 +22,7 @@ const ServicesPage = () => {
 
   const handleAddService = () => {
     setFormMode("add");
+    setCurrentService(null); // Clear current service when adding
     setIsModalVisible(true);
   };
 
@@ -117,7 +118,12 @@ const ServicesPage = () => {
         visible={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleFormSubmit}
-        initialValues={currentService || { name: "", partner: "", contactPerson: "", phone: "" }}
+        initialValues={{
+          name: currentService?.name || "",
+          partner: currentService?.partner?.id || "",
+          contactPerson: currentService?.partner?.contactPerson || "",
+          phone: currentService?.partner?.phone || "",
+        }}
         mode={formMode}
         title={formMode === "edit" ? "Edit Service" : "Add Service"} // Dynamic title
         fields={[

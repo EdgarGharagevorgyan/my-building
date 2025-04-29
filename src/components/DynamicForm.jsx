@@ -191,6 +191,25 @@ const DynamicForm = ({
             );
           }
 
+          if (field.type === "select") {
+            return (
+              <Form.Item
+                key={field.name}
+                name={field.name}
+                label={field.label}
+                rules={field.rules || [{ required: true, message: `${field.label} is required` }]}
+              >
+                <Select
+                  options={field.options}
+                  onChange={(value) => {
+                    const updatedValues = field.onChange(value);
+                    form.setFieldsValue(updatedValues);
+                  }}
+                />
+              </Form.Item>
+            );
+          }
+          
           return (
             <Form.Item
               key={field.name}
@@ -208,3 +227,4 @@ const DynamicForm = ({
 };
 
 export default DynamicForm;
+

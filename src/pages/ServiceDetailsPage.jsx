@@ -12,6 +12,7 @@ const ServiceDetailsPage = () => {
   const service = useSelector((state) =>
     state.services.services.find((s) => s.id === parseInt(id))
   );
+  const partners = useSelector((state) => state.partners.partners); // Get partners from Redux store
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -20,9 +21,17 @@ const ServiceDetailsPage = () => {
   }
 
   const handleEdit = (values) => {
-    dispatch(updateService({ ...service, ...values }));
+    const selectedPartner = partners.find((partner) => partner.id === values.partner);
+
+    const updatedService = {
+      ...service,
+      ...values,
+      partner: selectedPartner, // Update with full partner object
+    };
+
+    dispatch(updateService(updatedService));
     setIsModalVisible(false);
-    navigate(`/services`); // Navigate back to the table after editing
+    // navigate(`/services`); // Navigate back to the table after editing
   };
 
   return (
@@ -67,9 +76,16 @@ const ServiceDetailsPage = () => {
             name: "partner",
             label: "Partner",
             type: "select",
-            options: service.partner
-              ? [{ label: service.partner.companyName, value: service.partner.id }]
-              : [],
+            options: partners.map((partner) => ({
+              label: partner.companyName,
+              value: partner.id,
+            })),
+            onChange: (partnerId) => {
+              const selectedPartner = partners.find((partner) => partner.id === partnerId);
+              return selectedPartner
+                ? { contactPerson: selectedPartner.contactPerson, phone: selectedPartner.phone }
+                : {};
+            },
           },
           { name: "contactPerson", label: "Contact Person", rules: [{ required: true }] },
           { name: "phone", label: "Phone", rules: [{ required: true }] },
