@@ -34,7 +34,6 @@ export const mockBuildings = [
     createdAt: "2025-02-01T10:00:00Z",
     updatedAt: "2025-02-10T12:00:00Z",
   },
-  // Add more buildings as needed
 ];
 
 export const mockFamilies = [
@@ -86,7 +85,6 @@ export const mockFamilies = [
     createdAt: "2025-02-01T10:00:00Z",
     updatedAt: "2025-02-20T12:00:00Z",
   },
-  // Add more families as needed
 ];
 
 export const mockServices = [

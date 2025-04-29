@@ -9,7 +9,7 @@ const ServicesPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const services = useSelector((state) => state.services.services);
-  const partners = useSelector((state) => state.partners.partners); // Get partners from Redux store
+  const partners = useSelector((state) => state.partners.partners);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formMode, setFormMode] = useState("add");
@@ -22,7 +22,7 @@ const ServicesPage = () => {
 
   const handleAddService = () => {
     setFormMode("add");
-    setCurrentService(null); // Clear current service when adding
+    setCurrentService(null);
     setIsModalVisible(true);
   };
 
@@ -31,7 +31,7 @@ const ServicesPage = () => {
 
     const serviceData = {
       ...values,
-      partner: selectedPartner, // Save the full partner object
+      partner: selectedPartner,
     };
 
     if (formMode === "add") {
@@ -68,7 +68,7 @@ const ServicesPage = () => {
           },
           {
             title: "Partner",
-            dataIndex: ["partner", "companyName"], // Display the partner's company name
+            dataIndex: ["partner", "companyName"],
             key: "partner",
           },
           {
@@ -78,7 +78,7 @@ const ServicesPage = () => {
               <Space size="middle">
                 <Button
                   onClick={(e) => {
-                    e.stopPropagation(); // Prevent row click
+                    e.stopPropagation();
                     setFormMode("edit");
                     setCurrentService(record);
                     setIsModalVisible(true);
@@ -90,8 +90,8 @@ const ServicesPage = () => {
                 <Popconfirm
                   title="Are you sure to delete this service?"
                   onConfirm={(e) => {
-                    e.stopPropagation(); // Prevent row click
-                    dispatch(deleteService(record.id)); // Dispatch the delete action
+                    e.stopPropagation(); 
+                    dispatch(deleteService(record.id)); 
                   }}
                   okText="Yes"
                   cancelText="No"
@@ -99,7 +99,7 @@ const ServicesPage = () => {
                   <Button
                     type="primary"
                     danger
-                    onClick={(e) => e.stopPropagation()} // Prevent row click
+                    onClick={(e) => e.stopPropagation()} 
                   >
                     Delete
                   </Button>
@@ -125,7 +125,7 @@ const ServicesPage = () => {
           phone: currentService?.partner?.phone || "",
         }}
         mode={formMode}
-        title={formMode === "edit" ? "Edit Service" : "Add Service"} // Dynamic title
+        title={formMode === "edit" ? "Edit Service" : "Add Service"}
         fields={[
           { name: "name", label: "Service Name", rules: [{ required: true }] },
           {

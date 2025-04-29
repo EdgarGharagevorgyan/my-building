@@ -13,8 +13,8 @@ const BuildingDetailsPage = () => {
     state.buildings.buildings.find((b) => b.id === parseInt(id))
   );
 
-  const families = useSelector((state) => state.families.families); // Get families from Redux
-  const services = useSelector((state) => state.services.services); // Get services from Redux
+  const families = useSelector((state) => state.families.families); 
+  const services = useSelector((state) => state.services.services); 
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -22,12 +22,10 @@ const BuildingDetailsPage = () => {
     return <p>Building not found!</p>;
   }
 
-  // Debugging logs
   console.log("Families:", families);
   console.log("Services:", services);
   console.log("Building:", building);
 
-  // Format the date to "YYYY-MM-DD HH:mm"
   const formatDate = (isoString) => {
     const options = {
       year: "numeric",
@@ -40,11 +38,9 @@ const BuildingDetailsPage = () => {
     return new Intl.DateTimeFormat("en-GB", options).format(new Date(isoString));
   };
 
-  // Flatten the data for the table
   const tableData = [
     ...(building.floors?.flatMap((floor) =>
       floor.apartments?.map((apartment) => {
-        // Handle both object and ID cases for family and service
         const familyId =
           apartment.family && typeof apartment.family === "object"
             ? apartment.family.id
@@ -54,30 +50,27 @@ const BuildingDetailsPage = () => {
             ? apartment.service.id
             : apartment.service;
 
-        const family = families.find((f) => f.id === familyId) || null; // Resolve family by ID
-        const service = services.find((s) => s.id === serviceId) || null; // Resolve service by ID
+        const family = families.find((f) => f.id === familyId) || null;
+        const service = services.find((s) => s.id === serviceId) || null;
 
-        // Debugging logs
         console.log("Apartment:", apartment);
         console.log("Resolved Family:", family);
         console.log("Resolved Service:", service);
 
         return {
-          key: `apartment-${floor.id}-${apartment.id}`, // Unique key for each row
+          key: `apartment-${floor.id}-${apartment.id}`,
           floorNumber: floor.number,
           apartmentNumber: apartment.number,
-          familyName: family?.name || "N/A", // Display family name or "N/A"
-          serviceName: service?.name || "N/A", // Display service name or "N/A"
-          partnerName: service?.partner?.companyName || "N/A", // Display partner name or "N/A"
+          familyName: family?.name || "N/A", 
+          serviceName: service?.name || "N/A", 
+          partnerName: service?.partner?.companyName || "N/A", 
         };
       })
     ) || []),
   ];
 
-  // Debugging log for tableData
   console.log("Final Table Data:", tableData);
 
-  // Define table columns
   const columns = [
     {
       title: "Floor Number",
@@ -122,11 +115,11 @@ const BuildingDetailsPage = () => {
           family:
             apartment.family && typeof apartment.family === "object"
               ? apartment.family.id
-              : apartment.family, // Save family ID or null
+              : apartment.family,
           service:
             apartment.service && typeof apartment.service === "object"
               ? apartment.service.id
-              : apartment.service, // Save service ID or null
+              : apartment.service,
         })),
       })),
     };
@@ -169,10 +162,10 @@ const BuildingDetailsPage = () => {
               ...floor,
               apartments: floor.apartments?.map((apartment) => ({
                 ...apartment,
-                family: apartment.family?.id || apartment.family || null, // Ensure family ID is passed
-                service: apartment.service?.id || apartment.service || null, // Ensure service ID is passed
+                family: apartment.family?.id || apartment.family || null,
+                service: apartment.service?.id || apartment.service || null,
               })),
-            })) || [], // Default to an empty array if undefined
+            })) || [],
         }}
         mode="edit"
         title="Edit Building"
@@ -183,11 +176,11 @@ const BuildingDetailsPage = () => {
             name: "floors",
             label: "Floors",
             type: "list",
-            nested: true, // Indicates that this list has nested fields
+            nested: true,
           },
         ]}
-        families={families} // Pass families array
-        services={services} // Pass services array
+        families={families}
+        services={services}
       />
     </div>
   );

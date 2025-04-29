@@ -17,9 +17,8 @@ const FamilyDetailsPage = () => {
     return <p>Family not found!</p>;
   }
 
-  // Format the date to "YYYY-MM-DD HH:mm"
   const formatDate = (isoString) => {
-    if (!isoString) return "N/A"; // Return "N/A" if date is invalid
+    if (!isoString) return "N/A"; 
     const options = {
       year: "numeric",
       month: "2-digit",
@@ -111,13 +110,13 @@ const FamilyDetailsPage = () => {
             title: "Created At",
             dataIndex: "createdAt",
             key: "createdAt",
-            render: (text) => formatDate(text), // Format date
+            render: (text) => formatDate(text), 
           },
           {
             title: "Updated At",
             dataIndex: "updatedAt",
             key: "updatedAt",
-            render: (text) => formatDate(text), // Format date
+            render: (text) => formatDate(text), 
           },
         ]}
         pagination={false}

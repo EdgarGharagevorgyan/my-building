@@ -42,7 +42,7 @@ const PartnersPage = () => {
         <Space size="middle">
           <Button
             onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
+              e.stopPropagation(); 
               setFormMode("edit");
               setCurrentPartner(record);
               setIsModalVisible(true);
@@ -54,8 +54,8 @@ const PartnersPage = () => {
           <Popconfirm
             title="Are you sure to delete this partner?"
             onConfirm={(e) => {
-              e.stopPropagation(); // Prevent row click
-              dispatch(deletePartner(record.id)); // Dispatch the delete action
+              e.stopPropagation(); 
+              dispatch(deletePartner(record.id));
             }}
             okText="Yes"
             cancelText="No"
@@ -63,7 +63,7 @@ const PartnersPage = () => {
             <Button
               type="primary"
               danger
-              onClick={(e) => e.stopPropagation()} // Prevent row click
+              onClick={(e) => e.stopPropagation()} 
             >
               Delete
             </Button>
@@ -117,7 +117,7 @@ const PartnersPage = () => {
         onSubmit={handleFormSubmit}
         initialValues={currentPartner || { companyName: "", contactPerson: "", phone: "" }}
         mode={formMode}
-        title={formMode === "edit" ? "Edit Partner" : "Add Partner"} // Dynamic title
+        title={formMode === "edit" ? "Edit Partner" : "Add Partner"} 
         fields={[
           { name: "companyName", label: "Company Name", rules: [{ required: true }] },
           { name: "contactPerson", label: "Contact Person", rules: [{ required: true }] },

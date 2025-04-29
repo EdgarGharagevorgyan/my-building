@@ -12,7 +12,7 @@ const ServiceDetailsPage = () => {
   const service = useSelector((state) =>
     state.services.services.find((s) => s.id === parseInt(id))
   );
-  const partners = useSelector((state) => state.partners.partners); // Get all partners from Redux
+  const partners = useSelector((state) => state.partners.partners); 
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -26,12 +26,12 @@ const ServiceDetailsPage = () => {
     const updatedService = {
       ...service,
       ...values,
-      partner: selectedPartner, // Update with full partner object
+      partner: selectedPartner, 
     };
 
     dispatch(updateService(updatedService));
     setIsModalVisible(false);
-    navigate(`/services`); // Navigate back to the table after editing
+    navigate(`/services`); 
   };
 
   const columns = [

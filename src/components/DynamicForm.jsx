@@ -14,7 +14,6 @@ const DynamicForm = ({
 }) => {
   const [form] = Form.useForm();
 
-  // Set form values when the modal is opened
   useEffect(() => {
     if (visible) {
       form.setFieldsValue(initialValues);
@@ -23,15 +22,12 @@ const DynamicForm = ({
 
   const handleOk = () => {
     form.validateFields().then((values) => {
-      // Compare submitted values with initial values
       if (JSON.stringify(values) === JSON.stringify(initialValues)) {
-        // If no changes, just close the modal
         form.resetFields();
         onCancel();
         return;
       }
 
-      // If there are changes, submit the updated values
       onSubmit(values);
       form.resetFields();
     });
@@ -39,7 +35,7 @@ const DynamicForm = ({
 
   return (
     <Modal
-      visible={visible}
+      open={visible}
       title={title || (mode === "edit" ? "Edit Item" : "Add Item")}
       onCancel={onCancel}
       onOk={handleOk}
@@ -47,7 +43,6 @@ const DynamicForm = ({
       <Form form={form} initialValues={initialValues} layout="vertical">
         {fields.map((field) => {
           if (field.type === "list" && field.name === "floors") {
-            // Add Floor functionality for Add Building
             return (
               <Form.List key={field.name} name={field.name}>
                 {(fields, { add, remove }) => (
@@ -135,7 +130,6 @@ const DynamicForm = ({
           }
 
           if (field.type === "list" && field.name === "members") {
-            // Add Member functionality for Add Family
             return (
               <Form.List key={field.name} name={field.name}>
                 {(fields, { add, remove }) => (

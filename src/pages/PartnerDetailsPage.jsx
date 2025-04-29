@@ -22,7 +22,6 @@ const PartnerDetailsPage = () => {
   const handleEdit = (values) => {
     dispatch(updatePartner({ ...partner, ...values }));
     setIsModalVisible(false);
-    // navigate(`/partners`); // Navigate back to the table after editing
   };
 
   const columns = [

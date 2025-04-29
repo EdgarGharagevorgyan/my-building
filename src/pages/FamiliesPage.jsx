@@ -32,7 +32,7 @@ const FamiliesPage = () => {
         <Space size="middle">
           <Button
             onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
+              e.stopPropagation(); 
               setFormMode("edit");
               setCurrentFamily(record);
               setIsModalVisible(true);
@@ -44,8 +44,8 @@ const FamiliesPage = () => {
           <Popconfirm
             title="Are you sure to delete this family?"
             onConfirm={(e) => {
-              e.stopPropagation(); // Prevent row click
-              dispatch(deleteFamily(record.id)); // Dispatch the delete action
+              e.stopPropagation(); 
+              dispatch(deleteFamily(record.id));
             }}
             okText="Yes"
             cancelText="No"
@@ -53,7 +53,7 @@ const FamiliesPage = () => {
             <Button
               type="primary"
               danger
-              onClick={(e) => e.stopPropagation()} // Prevent row click
+              onClick={(e) => e.stopPropagation()} 
             >
               Delete
             </Button>
@@ -120,7 +120,7 @@ const FamiliesPage = () => {
         onSubmit={handleFormSubmit}
         initialValues={currentFamily || { name: "", members: [] }}
         mode={formMode}
-        title={formMode === "edit" ? "Edit Family" : "Add Family"} // Dynamic title
+        title={formMode === "edit" ? "Edit Family" : "Add Family"} 
         fields={[
           { name: "name", label: "Family Name", rules: [{ required: true }] },
           {

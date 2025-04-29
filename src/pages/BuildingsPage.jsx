@@ -9,20 +9,18 @@ const BuildingsPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const buildings = useSelector((state) => state.buildings.buildings);
-  const services = useSelector((state) => state.services.services); // Mock services from Redux
-  const families = useSelector((state) => state.families.families); // Fetch families from Redux
+  const services = useSelector((state) => state.services.services);
+  const families = useSelector((state) => state.families.families);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [formMode, setFormMode] = useState("add");
   const [currentBuilding, setCurrentBuilding] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Filter buildings based on the search query
   const filteredBuildings = buildings.filter((building) =>
     building.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Table columns
   const columns = [
     {
       title: "Building Name",
@@ -41,7 +39,7 @@ const BuildingsPage = () => {
         <Space size="middle">
           <Button
             onClick={(e) => {
-              e.stopPropagation(); // Prevent row click
+              e.stopPropagation(); 
               setFormMode("edit");
               setCurrentBuilding(record);
               setIsModalVisible(true);
@@ -53,8 +51,8 @@ const BuildingsPage = () => {
           <Popconfirm
             title="Are you sure to delete this building?"
             onConfirm={(e) => {
-              e.stopPropagation(); // Prevent row click
-              dispatch(deleteBuilding(record.id)); // Dispatch the delete action
+              e.stopPropagation(); 
+              dispatch(deleteBuilding(record.id)); 
             }}
             okText="Yes"
             cancelText="No"
@@ -62,7 +60,7 @@ const BuildingsPage = () => {
             <Button
               type="primary"
               danger
-              onClick={(e) => e.stopPropagation()} // Prevent row click
+              onClick={(e) => e.stopPropagation()} 
             >
               Delete
             </Button>
@@ -72,52 +70,42 @@ const BuildingsPage = () => {
     },
   ];
 
-  // Handle adding a new building
   const handleAddBuilding = () => {
     setFormMode("add");
     setCurrentBuilding(null);
     setIsModalVisible(true);
   };
 
-  // Handle form submission for adding or editing a building
   const handleFormSubmit = (values) => {
     const currentTimestamp = new Date().toISOString();
 
-    // Process the form values to include floors and services
     const processedValues = {
       ...values,
-      createdAt: formMode === "add" ? currentTimestamp : currentBuilding.createdAt, // Set createdAt only for new buildings
-      updatedAt: currentTimestamp, // Always update updatedAt
+      createdAt: formMode === "add" ? currentTimestamp : currentBuilding.createdAt,
+      updatedAt: currentTimestamp,
       floors: values.floors?.map((floor, index) => ({
-        id: floor.id || Date.now() + index, // Assign a unique ID if not present
-        number: index + 1, // Automatically assign floor numbers starting from 1
+        id: floor.id || Date.now() + index,
+        number: index + 1,
         apartments: floor.apartments?.map((apartment, aptIndex) => ({
-          id: apartment.id || Date.now() + aptIndex, // Assign a unique ID if not present
+          id: apartment.id || Date.now() + aptIndex,
           number: apartment.number,
-          family: families.find((f) => f.id === apartment.family) || null, // Populate family object
-          service: services.find((s) => s.id === apartment.service) || null, // Populate service object
+          family: families.find((f) => f.id === apartment.family) || null, 
+          service: services.find((s) => s.id === apartment.service) || null, 
         })),
       })),
-      services: values.services || [], // Keep services as an array of selected service IDs
+      services: values.services || [],
     };
 
     if (formMode === "add") {
-      // Generate a new ID for the building
       const newBuildingId = Date.now();
-      // Dispatch the addBuilding action with the processed values
       dispatch(addBuilding({ id: newBuildingId, ...processedValues }));
-      // Navigate to the details page of the newly added building
-      // navigate(`/buildings/${newBuildingId}`);
     } else if (formMode === "edit") {
-      // Dispatch the updateBuilding action with the processed values
       dispatch(updateBuilding({ ...currentBuilding, ...processedValues }));
     }
 
-    // Close the modal after submission
     setIsModalVisible(false);
   };
 
-  // Handle canceling the modal
   const handleCancel = () => {
     setIsModalVisible(false);
   };
@@ -156,11 +144,11 @@ const BuildingsPage = () => {
             name: "floors",
             label: "Floors",
             type: "list",
-            nested: true, // Indicates that this list has nested fields
+            nested: true,
           },
         ]}
         families={families} // Pass families as a prop for the dropdown
-        services={services} // Pass services as a prop for the dropdown
+        services={services}
       />
     </div>
   );

@@ -12,22 +12,22 @@ const DashboardPage = () => {
       <h2>Dashboard</h2>
       <Row gutter={16}>
         <Col span={6}>
-          <Card title="Buildings" bordered={false}>
+          <Card title="Buildings" variant={false}>
             <h3>{totalBuildings}</h3>
           </Card>
         </Col>
         <Col span={6}>
-          <Card title="Families" bordered={false}>
+          <Card title="Families" variant={false}>
             <h3>{totalFamilies}</h3>
           </Card>
         </Col>
         <Col span={6}>
-          <Card title="Services" bordered={false}>
+          <Card title="Services" variant={false}>
             <h3>{totalServices}</h3>
           </Card>
         </Col>
         <Col span={6}>
-          <Card title="Partners" bordered={false}>
+          <Card title="Partners" variant={false}>
             <h3>{totalPartners}</h3>
           </Card>
         </Col>
