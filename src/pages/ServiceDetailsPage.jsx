@@ -39,21 +39,25 @@ const ServiceDetailsPage = () => {
       title: "Service Name",
       dataIndex: "name",
       key: "name",
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Partner",
       dataIndex: "partnerName",
       key: "partnerName",
+      sorter: (a, b) => a.partnerName.localeCompare(b.partnerName),
     },
     {
       title: "Contact Person",
       dataIndex: "contactPerson",
       key: "contactPerson",
+      sorter: (a, b) => a.contactPerson.localeCompare(b.contactPerson),
     },
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      sorter: (a, b) => a.phone.localeCompare(b.phone),
     },
   ];
 

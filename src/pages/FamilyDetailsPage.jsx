@@ -60,28 +60,33 @@ const FamilyDetailsPage = () => {
       title: "Full Name",
       dataIndex: "fullName",
       key: "fullName",
+      sorter: (a, b) => a.fullName.localeCompare(b.fullName),
     },
     {
       title: "Age",
       dataIndex: "age",
       key: "age",
+      sorter: (a, b) => a.age - b.age,
     },
     {
       title: "Role",
       dataIndex: "role",
       key: "role",
+      sorter: (a, b) => a.role.localeCompare(b.role),
     },
     {
       title: "Created At",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (text) => formatDate(text), // Format date
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
+      render: (text) => formatDate(text),
     },
     {
       title: "Updated At",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      render: (text) => formatDate(text), // Format date
+      sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
+      render: (text) => formatDate(text),
     },
   ];
 

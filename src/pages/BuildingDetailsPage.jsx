@@ -83,26 +83,31 @@ const BuildingDetailsPage = () => {
       title: "Floor Number",
       dataIndex: "floorNumber",
       key: "floorNumber",
+      sorter: (a, b) => a.floorNumber - b.floorNumber,
     },
     {
       title: "Apartment Number",
       dataIndex: "apartmentNumber",
       key: "apartmentNumber",
+      sorter: (a, b) => a.apartmentNumber - b.apartmentNumber,
     },
     {
       title: "Family Name",
       dataIndex: "familyName",
       key: "familyName",
+      sorter: (a, b) => a.familyName.localeCompare(b.familyName),
     },
     {
       title: "Service Name",
       dataIndex: "serviceName",
       key: "serviceName",
+      sorter: (a, b) => a.serviceName.localeCompare(b.serviceName),
     },
     {
       title: "Partner Name",
       dataIndex: "partnerName",
       key: "partnerName",
+      sorter: (a, b) => a.partnerName.localeCompare(b.partnerName),
     },
   ];
 

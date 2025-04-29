@@ -30,16 +30,19 @@ const PartnerDetailsPage = () => {
       title: "Company Name",
       dataIndex: "companyName",
       key: "companyName",
+      sorter: (a, b) => a.companyName.localeCompare(b.companyName),
     },
     {
       title: "Contact Person",
       dataIndex: "contactPerson",
       key: "contactPerson",
+      sorter: (a, b) => a.contactPerson.localeCompare(b.contactPerson),
     },
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
+      sorter: (a, b) => a.phone.localeCompare(b.phone),
     },
   ];
 
