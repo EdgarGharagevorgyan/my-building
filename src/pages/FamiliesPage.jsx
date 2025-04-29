@@ -70,10 +70,22 @@ const FamiliesPage = () => {
   };
 
   const handleFormSubmit = (values) => {
+    const timestamp = new Date().toISOString();
+    const familyData = {
+      ...values,
+      createdAt: formMode === "add" ? timestamp : currentFamily.createdAt,
+      updatedAt: timestamp,
+      members: values.members.map((member) => ({
+        ...member,
+        createdAt: member.createdAt || timestamp,
+        updatedAt: timestamp,
+      })),
+    };
+
     if (formMode === "add") {
-      dispatch(addFamily({ id: Date.now(), ...values }));
+      dispatch(addFamily({ id: Date.now(), ...familyData }));
     } else if (formMode === "edit") {
-      dispatch(updateFamily({ ...currentFamily, ...values }));
+      dispatch(updateFamily({ ...currentFamily, ...familyData }));
     }
     setIsModalVisible(false);
   };

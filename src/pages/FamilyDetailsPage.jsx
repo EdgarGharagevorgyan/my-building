@@ -17,8 +17,36 @@ const FamilyDetailsPage = () => {
     return <p>Family not found!</p>;
   }
 
+  // Format the date to "YYYY-MM-DD HH:mm"
+  const formatDate = (isoString) => {
+    if (!isoString) return "N/A"; // Return "N/A" if date is invalid
+    const options = {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    };
+    return new Intl.DateTimeFormat("en-GB", options).format(new Date(isoString));
+  };
+
   const handleEdit = (values) => {
-    dispatch(updateFamily({ ...family, ...values }));
+    const timestamp = new Date().toISOString();
+    const updatedMembers = values.members.map((member) => ({
+      ...member,
+      createdAt: member.createdAt || timestamp,
+      updatedAt: timestamp,
+    }));
+
+    const updatedFamily = {
+      ...family,
+      ...values,
+      members: updatedMembers,
+      updatedAt: timestamp,
+    };
+
+    dispatch(updateFamily(updatedFamily));
     setIsModalVisible(false);
   };
 
@@ -43,6 +71,18 @@ const FamilyDetailsPage = () => {
       dataIndex: "role",
       key: "role",
     },
+    {
+      title: "Created At",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text) => formatDate(text), // Format date
+    },
+    {
+      title: "Updated At",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (text) => formatDate(text), // Format date
+    },
   ];
 
   return (
@@ -66,11 +106,13 @@ const FamilyDetailsPage = () => {
             title: "Created At",
             dataIndex: "createdAt",
             key: "createdAt",
+            render: (text) => formatDate(text), // Format date
           },
           {
             title: "Updated At",
             dataIndex: "updatedAt",
             key: "updatedAt",
+            render: (text) => formatDate(text), // Format date
           },
         ]}
         pagination={false}
@@ -84,6 +126,8 @@ const FamilyDetailsPage = () => {
             fullName: member.fullName,
             age: member.age,
             role: member.role,
+            createdAt: member.createdAt,
+            updatedAt: member.updatedAt,
           }))}
           columns={columns}
           pagination={false}
