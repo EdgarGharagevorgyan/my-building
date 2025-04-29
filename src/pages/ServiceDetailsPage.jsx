@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Card, Button } from "antd";
+import { Card, Button, Table, Space } from "antd";
 import { useState } from "react";
 import DynamicForm from "../components/DynamicForm";
 import { updateService } from "../features/services/servicesSlice";
@@ -12,7 +12,7 @@ const ServiceDetailsPage = () => {
   const service = useSelector((state) =>
     state.services.services.find((s) => s.id === parseInt(id))
   );
-  const partners = useSelector((state) => state.partners.partners); // Get partners from Redux store
+  const partners = useSelector((state) => state.partners.partners); // Get all partners from Redux
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -31,32 +31,55 @@ const ServiceDetailsPage = () => {
 
     dispatch(updateService(updatedService));
     setIsModalVisible(false);
-    // navigate(`/services`); // Navigate back to the table after editing
+    navigate(`/services`); // Navigate back to the table after editing
   };
+
+  const columns = [
+    {
+      title: "Service Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Partner",
+      dataIndex: "partnerName",
+      key: "partnerName",
+    },
+    {
+      title: "Contact Person",
+      dataIndex: "contactPerson",
+      key: "contactPerson",
+    },
+    {
+      title: "Phone",
+      dataIndex: "phone",
+      key: "phone",
+    },
+  ];
+
+  const tableData = [
+    {
+      key: service.id,
+      name: service.name,
+      partnerName: service.partner?.companyName || "N/A",
+      contactPerson: service.partner?.contactPerson || "N/A",
+      phone: service.partner?.phone || "N/A",
+    },
+  ];
 
   return (
     <div style={{ padding: 24 }}>
-      <Card title={service.name} bordered={false}>
-        <p>
-          <strong>Partner:</strong> {service.partner?.companyName || "N/A"}
-        </p>
-        <p>
-          <strong>Contact Person:</strong> {service.partner?.contactPerson || "N/A"}
-        </p>
-        <p>
-          <strong>Phone:</strong> {service.partner?.phone || "N/A"}
-        </p>
-        <Button type="primary" onClick={() => navigate(`/services`)}>
-          Return to Table
-        </Button>
-        <Button
-          type="default"
-          style={{ marginLeft: 8 }}
-          onClick={() => setIsModalVisible(true)} // Open the edit modal
-        >
-          Edit
-        </Button>
-      </Card>
+      <Table columns={columns} dataSource={tableData} pagination={false} />
+      <div style={{ marginTop: 16 }}>
+        <Space>
+          <Button type="primary" onClick={() => navigate(`/services`)}>
+            Return to Services
+          </Button>
+          <Button type="default" onClick={() => setIsModalVisible(true)}>
+            Edit
+          </Button>
+        </Space>
+      </div>
 
       <DynamicForm
         visible={isModalVisible}
