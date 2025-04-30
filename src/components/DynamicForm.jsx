@@ -61,11 +61,11 @@ const DynamicForm = ({
 
   return (
     <ErrorBoundary
-      FallbackComponent={AntdErrorFallback} // Fallback UI for errors
-      onError={logError} // Log errors for debugging
+      FallbackComponent={AntdErrorFallback} 
+      onError={logError} 
       onReset={() => {
         console.log("Resetting error boundary...");
-        window.location.reload(); // Reset the app state
+        window.location.reload(); 
       }}
     >
       <Modal
