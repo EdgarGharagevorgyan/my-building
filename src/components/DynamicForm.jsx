@@ -259,7 +259,11 @@ const DynamicForm = ({
                 label={field.label}
                 rules={field.rules || [{ required: true, message: `${field.label} is required` }]}
               >
-                <Input />
+                {field.name === "phone" ? (
+                  <Input type="number" />
+                ) : (
+                  <Input />
+                )}
               </Form.Item>
             );
           })}
