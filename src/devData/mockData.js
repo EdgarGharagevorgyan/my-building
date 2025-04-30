@@ -103,16 +103,6 @@ export const mockServices = [
     name: "Security",
     partner: { id: 3, companyName: "SecureIt", contactPerson: "Charlie", phone: "555-555-5555" },
   },
-  {
-    id: 4,
-    name: "Landscaping",
-    partner: null,
-  },
-  {
-    id: 5,
-    name: "Pest Control",
-    partner: { id: 4, companyName: "PestAway", contactPerson: "Diana", phone: "444-444-4444" },
-  },
 ];
 
 export const mockPartners = [
@@ -120,5 +110,4 @@ export const mockPartners = [
   { id: 2, companyName: "FixIt", contactPerson: "Bob", phone: "987-654-3210" },
   { id: 3, companyName: "SecureIt", contactPerson: "Charlie", phone: "555-555-5555" },
   { id: 4, companyName: "PestAway", contactPerson: "Diana", phone: "444-444-4444" },
-  { id: 5, companyName: "EmptyCo", contactPerson: "", phone: "" },
 ];

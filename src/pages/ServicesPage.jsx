@@ -47,6 +47,21 @@ const ServicesPage = () => {
     setIsModalVisible(false);
   };
 
+  const getPartnerDetails = (partnerId) => {
+    const partner = partners.find((partner) => partner.id === partnerId);
+    return partner
+      ? {
+          companyName: partner.companyName,
+          contactPerson: partner.contactPerson,
+          phone: partner.phone,
+        }
+      : {
+          companyName: "N/A",
+          contactPerson: "N/A",
+          phone: "N/A",
+        };
+  };
+
   return (
     <div style={{ padding: 24, overflowX: "auto" }}>
       <Space>
@@ -68,8 +83,21 @@ const ServicesPage = () => {
           },
           {
             title: "Partner",
-            dataIndex: ["partner", "companyName"],
+            dataIndex: "partner",
             key: "partner",
+            render: (partner) => getPartnerDetails(partner?.id).companyName,
+          },
+          {
+            title: "Contact Person",
+            dataIndex: "partner",
+            key: "contactPerson",
+            render: (partner) => getPartnerDetails(partner?.id).contactPerson,
+          },
+          {
+            title: "Phone",
+            dataIndex: "partner",
+            key: "phone",
+            render: (partner) => getPartnerDetails(partner?.id).phone,
           },
           {
             title: "Action",

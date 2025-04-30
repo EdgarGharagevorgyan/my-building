@@ -65,9 +65,11 @@ const ServiceDetailsPage = () => {
     {
       key: service.id,
       name: service.name,
-      partnerName: service.partner?.companyName || "N/A",
-      contactPerson: service.partner?.contactPerson || "N/A",
-      phone: service.partner?.phone || "N/A",
+      partnerName:
+        partners.find((partner) => partner.id === service.partner.id)?.companyName || "N/A",
+      contactPerson:
+        partners.find((partner) => partner.id === service.partner.id)?.contactPerson || "N/A",
+      phone: partners.find((partner) => partner.id === service.partner.id)?.phone || "N/A",
     },
   ];
 
