@@ -142,12 +142,16 @@ const ServicesPage = () => {
         visible={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleFormSubmit}
-        initialValues={{
-          name: currentService?.name || "",
-          partner: currentService?.partner?.id || "",
-          contactPerson: currentService?.partner?.contactPerson || "",
-          phone: currentService?.partner?.phone || "",
-        }}
+        initialValues={
+          currentService
+            ? {
+                name: currentService.name,
+                partner: currentService.partner?.id || "",
+                contactPerson: currentService.partner?.contactPerson || "",
+                phone: currentService.partner?.phone || "",
+              }
+            : { name: "", partner: "", contactPerson: "", phone: "" }
+        }
         mode={formMode}
         title={formMode === "edit" ? "Edit Service" : "Add Service"}
         fields={[
@@ -160,16 +164,11 @@ const ServicesPage = () => {
               label: partner.companyName,
               value: partner.id,
             })),
-            onChange: (partnerId) => {
-              const selectedPartner = partners.find((partner) => partner.id === partnerId);
-              return selectedPartner
-                ? { contactPerson: selectedPartner.contactPerson, phone: selectedPartner.phone }
-                : {};
-            },
           },
           { name: "contactPerson", label: "Contact Person", rules: [{ required: true }] },
           { name: "phone", label: "Phone", rules: [{ required: true }] },
         ]}
+        partners={partners} 
       />
     </div>
   );

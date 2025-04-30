@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Select, Button } from "antd";
+import { Modal, Form, Input, Select, Button, Space } from "antd";
 import { useEffect } from "react";
 
 const DynamicForm = ({
@@ -11,14 +11,28 @@ const DynamicForm = ({
   fields,
   families,
   services,
+  partners, 
 }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (visible) {
-      form.setFieldsValue(initialValues);
+      if (initialValues?.partner) {
+        const selectedPartner = partners.find((partner) => partner.id === initialValues.partner);
+        if (selectedPartner) {
+          form.setFieldsValue({
+            ...initialValues,
+            contactPerson: selectedPartner.contactPerson,
+            phone: selectedPartner.phone,
+          });
+        } else {
+          form.setFieldsValue(initialValues);
+        }
+      } else {
+        form.setFieldsValue(initialValues);
+      }
     }
-  }, [visible, initialValues, form]);
+  }, [visible, initialValues, form, partners]);
 
   const handleOk = () => {
     form.validateFields().then((values) => {
@@ -196,14 +210,19 @@ const DynamicForm = ({
                 <Select
                   options={field.options}
                   onChange={(value) => {
-                    const updatedValues = field.onChange(value);
-                    form.setFieldsValue(updatedValues);
+                    const selectedPartner = partners.find((partner) => partner.id === value);
+                    if (selectedPartner) {
+                      form.setFieldsValue({
+                        contactPerson: selectedPartner.contactPerson,
+                        phone: selectedPartner.phone,
+                      });
+                    }
                   }}
                 />
               </Form.Item>
             );
           }
-          
+
           return (
             <Form.Item
               key={field.name}
@@ -221,4 +240,3 @@ const DynamicForm = ({
 };
 
 export default DynamicForm;
-

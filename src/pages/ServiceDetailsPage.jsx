@@ -93,9 +93,9 @@ const ServiceDetailsPage = () => {
         onSubmit={handleEdit}
         initialValues={{
           name: service.name,
-          partner: service.partner?.id,
-          contactPerson: service.partner?.contactPerson,
-          phone: service.partner?.phone,
+          partner: service.partner?.id || "",
+          contactPerson: service.partner?.contactPerson || "",
+          phone: service.partner?.phone || "",
         }}
         mode="edit"
         title="Edit Service"
@@ -109,16 +109,11 @@ const ServiceDetailsPage = () => {
               label: partner.companyName,
               value: partner.id,
             })),
-            onChange: (partnerId) => {
-              const selectedPartner = partners.find((partner) => partner.id === partnerId);
-              return selectedPartner
-                ? { contactPerson: selectedPartner.contactPerson, phone: selectedPartner.phone }
-                : {};
-            },
           },
           { name: "contactPerson", label: "Contact Person", rules: [{ required: true }] },
           { name: "phone", label: "Phone", rules: [{ required: true }] },
         ]}
+        partners={partners} 
       />
     </div>
   );
