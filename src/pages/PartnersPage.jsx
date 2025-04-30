@@ -92,7 +92,7 @@ const PartnersPage = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, overflowX: "auto" }}>
       <Space>
         <Input.Search
           placeholder="Search Partners"
@@ -117,7 +117,7 @@ const PartnersPage = () => {
         onSubmit={handleFormSubmit}
         initialValues={currentPartner || { companyName: "", contactPerson: "", phone: "" }}
         mode={formMode}
-        title={formMode === "edit" ? "Edit Partner" : "Add Partner"} 
+        title={formMode === "edit" ? "Edit Partner" : "Add Partner"}
         fields={[
           { name: "companyName", label: "Company Name", rules: [{ required: true }] },
           { name: "contactPerson", label: "Contact Person", rules: [{ required: true }] },

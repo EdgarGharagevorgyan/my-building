@@ -52,3 +52,4 @@ const Sidebar = ({ collapsed, currentPath }) => {
 };
 
 export default Sidebar;
+

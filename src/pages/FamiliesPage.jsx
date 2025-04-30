@@ -95,7 +95,7 @@ const FamiliesPage = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, overflowX: "auto" }}>
       <Space>
         <Input.Search
           placeholder="Search Families"
@@ -120,7 +120,7 @@ const FamiliesPage = () => {
         onSubmit={handleFormSubmit}
         initialValues={currentFamily || { name: "", members: [] }}
         mode={formMode}
-        title={formMode === "edit" ? "Edit Family" : "Add Family"} 
+        title={formMode === "edit" ? "Edit Family" : "Add Family"}
         fields={[
           { name: "name", label: "Family Name", rules: [{ required: true }] },
           {

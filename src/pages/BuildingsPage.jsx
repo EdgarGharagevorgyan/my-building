@@ -111,7 +111,7 @@ const BuildingsPage = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, overflowX: "auto" }}>
       <Space>
         <Input.Search
           placeholder="Search Buildings"

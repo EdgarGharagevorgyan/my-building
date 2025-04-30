@@ -48,7 +48,7 @@ const ServicesPage = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, overflowX: "auto" }}>
       <Space>
         <Input.Search
           placeholder="Search Services"
@@ -90,17 +90,13 @@ const ServicesPage = () => {
                 <Popconfirm
                   title="Are you sure to delete this service?"
                   onConfirm={(e) => {
-                    e.stopPropagation(); 
-                    dispatch(deleteService(record.id)); 
+                    e.stopPropagation();
+                    dispatch(deleteService(record.id));
                   }}
                   okText="Yes"
                   cancelText="No"
                 >
-                  <Button
-                    type="primary"
-                    danger
-                    onClick={(e) => e.stopPropagation()} 
-                  >
+                  <Button type="primary" danger onClick={(e) => e.stopPropagation()}>
                     Delete
                   </Button>
                 </Popconfirm>

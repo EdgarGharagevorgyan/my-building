@@ -6,7 +6,7 @@ import Sidebar from "./Sidebar";
 import Content from "./Content";
 
 const MainLayout = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const location = useLocation();
 
   const toggleCollapsed = () => {

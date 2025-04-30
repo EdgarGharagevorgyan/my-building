@@ -129,7 +129,7 @@ const BuildingDetailsPage = () => {
   };
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, overflowX: "auto" }}>
       <h2>{building.name}</h2>
       <p>
         <strong>Address:</strong> {building.address}

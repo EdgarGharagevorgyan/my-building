@@ -6,15 +6,10 @@ const { Header: AntHeader } = Layout;
 const Header = ({ collapsed, toggleCollapsed }) => {
   const { token } = theme.useToken();
   
-  const headerStyle = {
-    padding: 0,
-    background: token.colorBgContainer,
-    display: 'flex',
-    alignItems: 'center',
-  };
+  
 
   return (
-    <AntHeader  style={headerStyle}>
+    <AntHeader className={'headerStyle'}>
       <Button
         type="text"
         icon={collapsed ? <SquareChevronRight /> : <SquareChevronLeft />}
@@ -25,7 +20,8 @@ const Header = ({ collapsed, toggleCollapsed }) => {
           height: 64,
         }}
       />
-      <h1 style={{ margin: 0, fontSize: "1.25rem" }}>Building Management System</h1>
+      <h1>Building Management System</h1>
+      <h1>BMS</h1>
     </AntHeader>
   );
 };

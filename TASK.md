@@ -72,7 +72,7 @@ Create a **React app** to manage **residential buildings**. The app should inclu
 ### 📋 Requirements
 
 - Use **React Router** for routing
-- Display data in **Ant Design tables** (or any UI library) optional use prefered one.
+- Display data in **Ant Design tables** (or any UI library) optional use preferred one.
 - Use mock data stored in local state
 - Components should be **modular and reusable**
 - Include **navigation bar** for switching between pages

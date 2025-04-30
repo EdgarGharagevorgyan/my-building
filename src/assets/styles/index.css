@@ -16,3 +16,39 @@ body,
 .ant-menu-item {
   padding: 5px 25px !important;
 }
+
+.mainLayoutStyle {
+  min-height: 100vh;
+}
+
+.headerStyle {
+  padding: 0px;
+  background-color: white;
+  display: flex;
+  align-items: center;
+}
+
+.headerStyle h1:first-of-type {
+  margin: 0px;
+  font-size: 20px;
+}
+
+.headerStyle h1:nth-of-type(2) {
+  display: none;
+}
+
+.dashboardRow {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 768px) {
+  .headerStyle h1:nth-of-type(2) {
+    display: block;
+    margin: 0px;
+    font-size: 20px;
+  }
+  .headerStyle h1:first-of-type {
+    display: none;
+  }
+}

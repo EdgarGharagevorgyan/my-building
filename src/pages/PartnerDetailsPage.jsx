@@ -55,7 +55,7 @@ const PartnerDetailsPage = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, overflowX: "auto" }}>
       <Table columns={columns} dataSource={tableData} pagination={false} />
       <div style={{ marginTop: 16 }}>
         <Space>

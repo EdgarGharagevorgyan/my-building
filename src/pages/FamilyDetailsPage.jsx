@@ -90,7 +90,7 @@ const FamilyDetailsPage = () => {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
+    <div style={{ padding: 24, overflowX: "auto" }}>
       <Table
         dataSource={[
           {
@@ -110,13 +110,13 @@ const FamilyDetailsPage = () => {
             title: "Created At",
             dataIndex: "createdAt",
             key: "createdAt",
-            render: (text) => formatDate(text), 
+            render: (text) => formatDate(text),
           },
           {
             title: "Updated At",
             dataIndex: "updatedAt",
             key: "updatedAt",
-            render: (text) => formatDate(text), 
+            render: (text) => formatDate(text),
           },
         ]}
         pagination={false}

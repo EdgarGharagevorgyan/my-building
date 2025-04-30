@@ -8,25 +8,25 @@ const DashboardPage = () => {
   const totalPartners = useSelector((state) => state.partners.partners.length);
 
   return (
-    <div style={{ padding: 24 }}>
+    <div>
       <h2>Dashboard</h2>
-      <Row gutter={16}>
-        <Col span={6}>
+      <Row gutter={[16, 16]} wrap>
+        <Col xs={24} sm={12} md={8} lg={6}>
           <Card title="Buildings" variant={false}>
             <h3>{totalBuildings}</h3>
           </Card>
         </Col>
-        <Col span={6}>
+        <Col xs={24} sm={12} md={8} lg={6}>
           <Card title="Families" variant={false}>
             <h3>{totalFamilies}</h3>
           </Card>
         </Col>
-        <Col span={6}>
+        <Col xs={24} sm={12} md={8} lg={6}>
           <Card title="Services" variant={false}>
             <h3>{totalServices}</h3>
           </Card>
         </Col>
-        <Col span={6}>
+        <Col xs={24} sm={12} md={8} lg={6}>
           <Card title="Partners" variant={false}>
             <h3>{totalPartners}</h3>
           </Card>
