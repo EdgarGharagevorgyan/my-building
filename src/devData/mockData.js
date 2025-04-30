@@ -91,23 +91,23 @@ export const mockServices = [
   {
     id: 1,
     name: "Cleaning",
-    partner: { id: 1, companyName: "CleanCo", contactPerson: "Alice", phone: "123-456-7890" },
+    partner: { id: 1, companyName: "CleanCo", contactPerson: "Alice", phone: "1234567890" },
   },
   {
     id: 2,
     name: "Maintenance",
-    partner: { id: 2, companyName: "FixIt", contactPerson: "Bob", phone: "987-654-3210" },
+    partner: { id: 2, companyName: "FixIt", contactPerson: "Bob", phone: "9876543210" },
   },
   {
     id: 3,
     name: "Security",
-    partner: { id: 3, companyName: "SecureIt", contactPerson: "Charlie", phone: "555-555-5555" },
+    partner: { id: 3, companyName: "SecureIt", contactPerson: "Charlie", phone: "5555555555" },
   },
 ];
 
 export const mockPartners = [
-  { id: 1, companyName: "CleanCo", contactPerson: "Alice", phone: "123-456-7890" },
-  { id: 2, companyName: "FixIt", contactPerson: "Bob", phone: "987-654-3210" },
-  { id: 3, companyName: "SecureIt", contactPerson: "Charlie", phone: "555-555-5555" },
-  { id: 4, companyName: "PestAway", contactPerson: "Diana", phone: "444-444-4444" },
+  { id: 1, companyName: "CleanCo", contactPerson: "Alice", phone: "1234567890" },
+  { id: 2, companyName: "FixIt", contactPerson: "Bob", phone: "9876543210" },
+  { id: 3, companyName: "SecureIt", contactPerson: "Charlie", phone: "5555555555" },
+  { id: 4, companyName: "PestAway", contactPerson: "Diana", phone: "4444444444" },
 ];
