@@ -5,23 +5,13 @@ import { Search } from "lucide-react";
 
 const CountriesPage = () => {
   const [data, setData] = useState([]);
-  const [searches, setSearches] = useState({
-    name: "",
-    capital: "",
-    language: "",
-    currency: "",
-    callingCode: "",
-  });
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     axios.get("https://restcountries.com/v3.1/all").then((res) => {
       setData(res.data);
     });
   }, []);
-
-  const handleSearchChange = (key, value) => {
-    setSearches((prev) => ({ ...prev, [key]: value }));
-  };
 
   const filteredData = data.filter((country) => {
     const fullName = country?.name?.official || "";
@@ -37,44 +27,31 @@ const CountriesPage = () => {
         ? country.idd.root + country.idd.suffixes[0]
         : "";
 
-    return (
-      fullName.toLowerCase().includes(searches.name.toLowerCase()) &&
-      capital.toLowerCase().includes(searches.capital.toLowerCase()) &&
-      languageNames.toLowerCase().includes(searches.language.toLowerCase()) &&
-      currencyNames.toLowerCase().includes(searches.currency.toLowerCase()) &&
-      callingCode.toLowerCase().includes(searches.callingCode.toLowerCase())
-    );
+    const combined =
+      `${fullName} ${capital} ${languageNames} ${currencyNames} ${callingCode}`.toLowerCase();
+    return combined.includes(search.trim().toLowerCase());
   });
-
-
-  const renderSearchInput = (placeholder, key) => (
-    <Input
-      placeholder={placeholder}
-      prefix={<Search size={14} />}
-      onChange={(e) => handleSearchChange(key, e.target.value)}
-    />
-  );
 
   const columns = [
     {
-      title: renderSearchInput("Search Name", "name"),
+      title: "Full Name",
       dataIndex: ["name", "official"],
       key: "name",
       render: (_, record) => record.name?.official || "-",
     },
     {
-      title: renderSearchInput("Search Capital", "capital"),
+      title: "Capital",
       dataIndex: "capital",
       key: "capital",
       render: (capital) => capital?.[0] || "-",
     },
     {
-      title: renderSearchInput("Search Language", "language"),
+      title: "Language",
       key: "languages",
       render: (_, record) => (record.languages ? Object.values(record.languages).join(", ") : "-"),
     },
     {
-      title: renderSearchInput("Search Currency", "currency"),
+      title: "Currency",
       key: "currencies",
       render: (_, record) =>
         record.currencies
@@ -84,7 +61,7 @@ const CountriesPage = () => {
           : "-",
     },
     {
-      title: renderSearchInput("Search Calling Code", "callingCode"),
+      title: "Calling Code",
       key: "callingCode",
       render: (_, record) =>
         record.idd?.root && record.idd?.suffixes?.length
@@ -94,15 +71,23 @@ const CountriesPage = () => {
   ];
 
   return (
-    <Space direction="vertical" style={{ width: "100%" }}>
-      <Table
-        columns={columns}
-        dataSource={filteredData}
-        rowKey={(record) => record.name?.official}
-        bordered
-        pagination={{ pageSize: 10 }}
-      />
-    </Space>
+    <div style={{ padding: 24, overflowX: "auto" }}>
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <Input
+          placeholder="Search"
+          prefix={<Search size={14} />}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{ maxWidth: 400 }}
+        />
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          rowKey={(record) => record.name?.official || record.name?.common}
+          bordered
+          // pagination={{ pageSize: 10, showSizeChanger: false }}
+        />
+      </Space>
+    </div>
   );
 };
 
