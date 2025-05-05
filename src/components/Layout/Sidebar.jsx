@@ -1,6 +1,6 @@
-import { Flex, Layout, Menu } from "antd";
+import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
-import { LayoutDashboard, Building2, Users, HandPlatter, Handshake } from "lucide-react";
+import { LayoutDashboard, Building2, Users, HandPlatter, Handshake, Flag } from "lucide-react";
 
 const { Sider } = Layout;
 
@@ -30,6 +30,11 @@ const Sidebar = ({ collapsed, currentPath }) => {
       key: "/partners",
       icon: <Handshake />,
       label: <Link to="/partners">Partners</Link>,
+    },
+    {
+      key: "/countries",
+      icon: <Flag />,
+      label: <Link to="/countries">Countries</Link>,
     },
   ];
 
