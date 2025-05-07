@@ -1,36 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
-import { Table, Input, Space } from "antd";
+import { Table, Input, Space, Spin } from "antd";
 import { Search } from "lucide-react";
+import { debounce } from "lodash";
 
 const CountriesPage = () => {
-  const [data, setData] = useState([]);
-  const [search, setSearch] = useState("");
+  const [originalData, setOriginalData] = useState([]);
+  const [tableData, setTableData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const debouncedSetSearchTerm = useMemo(() => debounce((value) => setSearchTerm(value), 300), []);
+
+  useEffect(() => () => debouncedSetSearchTerm.cancel(), [debouncedSetSearchTerm]);
 
   useEffect(() => {
-    axios.get("https://restcountries.com/v3.1/all").then((res) => {
-      setData(res.data);
-    });
+    setLoading(true);
+    axios
+      .get("https://restcountries.com/v3.1/all")
+      .then((response) => {
+        setOriginalData(response.data);
+        setTableData(response.data);
+      })
+      .catch(() => {
+        setOriginalData([]);
+        setTableData([]);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
-  const filteredData = data.filter((country) => {
-    const fullName = country?.name?.official || "";
-    const capital = country?.capital?.[0] || "";
-    const languageNames = country?.languages ? Object.values(country.languages).join(", ") : "";
-    const currencyNames = country?.currencies
-      ? Object.values(country.currencies)
-          .map((c) => c.name)
-          .join(", ")
-      : "";
-    const callingCode =
-      country?.idd?.root && country?.idd?.suffixes?.length
-        ? country.idd.root + country.idd.suffixes[0]
-        : "";
+  useEffect(() => {
+    const query = searchTerm.trim().toLowerCase();
+    if (!query) {
+      setTableData(originalData);
+      return;
+    }
 
-    const combined =
-      `${fullName} ${capital} ${languageNames} ${currencyNames} ${callingCode}`.toLowerCase();
-    return combined.includes(search.trim().toLowerCase());
-  });
+    const filtered = originalData.filter((country) => {
+      const officialName = country?.name?.official?.toLowerCase() || "";
+      const capitalCity = country?.capital?.[0]?.toLowerCase() || "";
+      const languageList = country?.languages
+        ? Object.values(country.languages).join(" ").toLowerCase()
+        : "";
+      const currencyList = country?.currencies
+        ? Object.values(country.currencies)
+            .map((c) => c.name)
+            .join(" ")
+            .toLowerCase()
+        : "";
+      const callingCode =
+        country?.idd?.root && country?.idd?.suffixes?.length
+          ? (country.idd.root + country.idd.suffixes[0]).toLowerCase()
+          : "";
+
+      const combined = `${officialName} ${capitalCity} ${languageList} ${currencyList} ${callingCode}`;
+      return combined.includes(query);
+    });
+
+    setTableData(filtered);
+  }, [searchTerm, originalData]);
 
   const columns = [
     {
@@ -74,18 +102,22 @@ const CountriesPage = () => {
     <div style={{ padding: 24, overflowX: "auto" }}>
       <Space direction="vertical" style={{ width: "100%" }}>
         <Input
-          placeholder="Search"
+          placeholder="Search by name, capital, language, currency, or calling code"
           prefix={<Search size={14} />}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => debouncedSetSearchTerm(e.target.value)}
           style={{ maxWidth: 400 }}
         />
-        <Table
-          columns={columns}
-          dataSource={filteredData}
-          rowKey={(record) => record.name?.official || record.name?.common}
-          bordered
-          // pagination={{ pageSize: 10, showSizeChanger: false }}
-        />
+        {loading ? (
+          <Spin size="large" style={{ display: "block", margin: "24px auto" }} />
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={tableData}
+            rowKey={(record) => record.name?.official || record.name?.common}
+            bordered
+            loading={false}
+          />
+        )}
       </Space>
     </div>
   );
