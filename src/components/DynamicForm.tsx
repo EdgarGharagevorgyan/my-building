@@ -1,9 +1,11 @@
-import { Modal, Form, Input, Select, Button, Space, message, FormListFieldData } from "antd";
+import { Modal, Form, Input, Select, Button, message } from "antd";
 import { useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import AntdErrorFallback from "./AntdErrorFallback";
-import {Family, Service, Partner, FieldConfig, Apartment, Floor, Member, FormValues, DynamicFormProps} from "./types"
-
+import PhoneInput from "./PhoneInput";
+import FloorList from "./FloorList";
+import MemberList from "./MemberList";
+import { FormValues, DynamicFormProps } from "./types";
 
 const logError = (error: Error, info: { componentStack?: string | null }) => {
   console.error("ErrorBoundary caught an error:", error);
@@ -28,7 +30,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
   useEffect(() => {
     if (visible) {
       if (initialValues?.partner) {
-        const selectedPartner = partners.find((partner) => partner.id === initialValues.partner);
+        const selectedPartner = partners.find((p) => p.id === initialValues.partner);
         if (selectedPartner) {
           form.setFieldsValue({
             ...initialValues,
@@ -42,7 +44,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         form.setFieldsValue(initialValues);
       }
     }
-  }, [visible, initialValues, form, partners]);
+  }, [visible, initialValues, partners, form]);
 
   const handleOk = () => {
     form
@@ -56,8 +58,8 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         onSubmit(values);
         form.resetFields();
       })
-      .catch((error) => {
-        console.error("Form validation failed:", error);
+      .catch((err) => {
+        console.error("Validation failed:", err);
         message.error("Please fill in all required fields correctly.");
       });
   };
@@ -72,24 +74,16 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
     const isFirstPlus = nextChar === "+" && current.length === 0;
     const isDigit = /^\d$/.test(nextChar || "");
 
-    if (!isDigit && !isFirstPlus) {
-      e.preventDefault();
-    }
+    if (!isDigit && !isFirstPlus) e.preventDefault();
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const pasted = e.clipboardData.getData("Text");
-    if (!/^\+?\d*$/.test(pasted)) {
-      e.preventDefault();
-    }
+    if (!/^\+?\d*$/.test(pasted)) e.preventDefault();
   };
 
   return (
-    <ErrorBoundary
-      FallbackComponent={AntdErrorFallback}
-      onError={logError}
-      onReset={() => window.location.reload()}
-    >
+    <ErrorBoundary FallbackComponent={AntdErrorFallback} onError={logError}>
       <Modal
         open={visible}
         title={title || (mode === "edit" ? "Edit Item" : "Add Item")}
@@ -99,146 +93,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
         <Form form={form} initialValues={initialValues} layout="vertical">
           {fields.map((field) => {
             if (field.type === "list" && field.name === "floors") {
-              return (
-                <Form.List key={field.name} name={field.name}>
-                  {(fields, { add, remove }) => (
-                    <>
-                      {fields.map((floorField, index) => (
-                        <div key={floorField.key} style={{ marginBottom: 16 }}>
-                          <p>
-                            <strong>Floor Number:</strong> {index + 1}
-                          </p>
-                          <Form.List name={[floorField.name, "apartments"]}>
-                            {(apartmentFields, { add: addApartment, remove: removeApartment }) => (
-                              <>
-                                {apartmentFields.map((apartmentField, aptIndex) => (
-                                  <div key={apartmentField.key} style={{ marginBottom: 16 }}>
-                                    <Form.Item
-                                      name={[apartmentField.name, "number"]}
-                                      fieldKey={[apartmentField.fieldKey!, "number"]}
-                                      rules={[
-                                        { required: true, message: "Apartment Number is required" },
-                                      ]}
-                                    >
-                                      <Input placeholder="Apartment Number" />
-                                    </Form.Item>
-                                    <Form.Item
-                                      name={[apartmentField.name, "family"]}
-                                      fieldKey={[apartmentField.fieldKey!, "family"]}
-                                    >
-                                      <Select
-                                        placeholder="Select Family"
-                                        options={families.map((family) => ({
-                                          label: family.name,
-                                          value: family.id,
-                                        }))}
-                                      />
-                                    </Form.Item>
-                                    <Form.Item
-                                      name={[apartmentField.name, "service"]}
-                                      fieldKey={[apartmentField.fieldKey!, "service"]}
-                                    >
-                                      <Select
-                                        placeholder="Select Service"
-                                        options={services.map((service) => ({
-                                          label: service.name,
-                                          value: service.id,
-                                        }))}
-                                      />
-                                    </Form.Item>
-                                    <Button
-                                      type="default"
-                                      danger
-                                      onClick={() => removeApartment(apartmentField.name)}
-                                    >
-                                      Remove Apartment
-                                    </Button>
-                                  </div>
-                                ))}
-                                <Space>
-                                  <Button type="dashed" onClick={() => addApartment()}>
-                                    Add Apartment
-                                  </Button>
-                                  <Button
-                                    type="default"
-                                    danger
-                                    onClick={() => remove(floorField.name)}
-                                  >
-                                    Remove Floor
-                                  </Button>
-                                </Space>
-                              </>
-                            )}
-                          </Form.List>
-                        </div>
-                      ))}
-                      <Button type="dashed" onClick={() => add()}>
-                        Add Floor
-                      </Button>
-                    </>
-                  )}
-                </Form.List>
-              );
+              return <FloorList key="floors" families={families} services={services} />;
             }
-
             if (field.type === "list" && field.name === "members") {
-              return (
-                <Form.List key={field.name} name={field.name}>
-                  {(fields, { add, remove }) => (
-                    <>
-                      {fields.map(({ key, name, fieldKey, ...restField }) => (
-                        <div
-                          key={key}
-                          style={{
-                            display: "flex",
-                            gap: "16px",
-                            marginBottom: "16px",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Form.Item
-                            {...restField}
-                            name={[name, "fullName"]}
-                            fieldKey={[fieldKey!, "fullName"]}
-                            style={{ flex: 2 }}
-                          >
-                            <Input placeholder="Full Name" />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "age"]}
-                            fieldKey={[fieldKey!, "age"]}
-                            style={{ flex: 1 }}
-                          >
-                            <Input type="number" placeholder="Age" />
-                          </Form.Item>
-                          <Form.Item
-                            {...restField}
-                            name={[name, "role"]}
-                            fieldKey={[fieldKey!, "role"]}
-                            style={{ flex: 2 }}
-                          >
-                            <Input placeholder="Role (e.g., Father, Mother, Child)" />
-                          </Form.Item>
-                          <Button
-                            type="link"
-                            danger
-                            onClick={() => remove(name)}
-                            style={{ flex: 0 }}
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      ))}
-                      <Button type="dashed" onClick={() => add()} block>
-                        Add Member
-                      </Button>
-                    </>
-                  )}
-                </Form.List>
-              );
+              return <MemberList key="members" />;
             }
-
             if (field.type === "select") {
               return (
                 <Form.Item
@@ -250,11 +109,11 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                   <Select
                     options={field.options}
                     onChange={(value) => {
-                      const selectedPartner = partners.find((partner) => partner.id === value);
-                      if (selectedPartner) {
+                      const selected = partners.find((p) => p.id === value);
+                      if (selected) {
                         form.setFieldsValue({
-                          contactPerson: selectedPartner.contactPerson,
-                          phone: selectedPartner.phone,
+                          contactPerson: selected.contactPerson,
+                          phone: selected.phone,
                         });
                       }
                     }}
@@ -262,7 +121,6 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 </Form.Item>
               );
             }
-
             return (
               <Form.Item
                 key={field.name}
@@ -271,8 +129,7 @@ const DynamicForm: React.FC<DynamicFormProps> = ({
                 rules={field.rules || [{ required: true, message: `${field.label} is required` }]}
               >
                 {field.name === "phone" ? (
-                  <Input
-                    type="text"
+                  <PhoneInput
                     value={phoneValue}
                     onChange={handlePhoneChange}
                     onBeforeInput={handleBeforeInput}
