@@ -1,7 +1,8 @@
 import React from "react";
 import { Button, Result } from "antd";
+import { FallbackProps } from "react-error-boundary";
 
-function AntdErrorFallback({ error, resetErrorBoundary }) {
+const AntdErrorFallback: React.FC<FallbackProps> = ({ error, resetErrorBoundary }) => {
   return (
     <Result
       status="error"
@@ -14,6 +15,6 @@ function AntdErrorFallback({ error, resetErrorBoundary }) {
       ]}
     />
   );
-}
+};
 
 export default AntdErrorFallback;

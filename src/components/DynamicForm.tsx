@@ -1,26 +1,29 @@
-import { Modal, Form, Input, Select, Button, Space, message } from "antd";
-import { useEffect } from "react";
+import { Modal, Form, Input, Select, Button, Space, message, FormListFieldData } from "antd";
+import { useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import AntdErrorFallback from "./AntdErrorFallback";
+import {Family, Service, Partner, FieldConfig, Apartment, Floor, Member, FormValues, DynamicFormProps} from "./types"
 
-const logError = (error, info) => {
+
+const logError = (error: Error, info: { componentStack?: string | null }) => {
   console.error("ErrorBoundary caught an error:", error);
-  console.error("Component stack:", info.componentStack);
+  console.error("Component stack:", info.componentStack || "No stack available.");
 };
 
-const DynamicForm = ({
+const DynamicForm: React.FC<DynamicFormProps> = ({
   visible,
   onCancel,
   onSubmit,
   initialValues,
-  mode,
+  mode = "add",
   title,
   fields,
   families,
   services,
-  partners, 
+  partners,
 }) => {
   const [form] = Form.useForm();
+  const [phoneValue, setPhoneValue] = useState<string>("+");
 
   useEffect(() => {
     if (visible) {
@@ -44,7 +47,7 @@ const DynamicForm = ({
   const handleOk = () => {
     form
       .validateFields()
-      .then((values) => {
+      .then((values: FormValues) => {
         if (JSON.stringify(values) === JSON.stringify(initialValues)) {
           form.resetFields();
           onCancel();
@@ -59,14 +62,33 @@ const DynamicForm = ({
       });
   };
 
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneValue(e.target.value);
+  };
+
+  const handleBeforeInput = (e: React.FormEvent<HTMLInputElement> & InputEvent) => {
+    const current = phoneValue;
+    const nextChar = e.data;
+    const isFirstPlus = nextChar === "+" && current.length === 0;
+    const isDigit = /^\d$/.test(nextChar || "");
+
+    if (!isDigit && !isFirstPlus) {
+      e.preventDefault();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pasted = e.clipboardData.getData("Text");
+    if (!/^\+?\d*$/.test(pasted)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <ErrorBoundary
-      FallbackComponent={AntdErrorFallback} 
-      onError={logError} 
-      onReset={() => {
-        console.log("Resetting error boundary...");
-        window.location.reload(); 
-      }}
+      FallbackComponent={AntdErrorFallback}
+      onError={logError}
+      onReset={() => window.location.reload()}
     >
       <Modal
         open={visible}
@@ -81,25 +103,19 @@ const DynamicForm = ({
                 <Form.List key={field.name} name={field.name}>
                   {(fields, { add, remove }) => (
                     <>
-                      {fields.map((fieldItem, index) => (
-                        <div
-                          key={`floor-${fieldItem.key}-${index}`}
-                          style={{ marginBottom: "16px" }}
-                        >
+                      {fields.map((floorField, index) => (
+                        <div key={floorField.key} style={{ marginBottom: 16 }}>
                           <p>
                             <strong>Floor Number:</strong> {index + 1}
                           </p>
-                          <Form.List name={[fieldItem.name, "apartments"]}>
+                          <Form.List name={[floorField.name, "apartments"]}>
                             {(apartmentFields, { add: addApartment, remove: removeApartment }) => (
                               <>
                                 {apartmentFields.map((apartmentField, aptIndex) => (
-                                  <div
-                                    key={`apartment-${apartmentField.key}-${aptIndex}`}
-                                    style={{ marginBottom: "16px" }}
-                                  >
+                                  <div key={apartmentField.key} style={{ marginBottom: 16 }}>
                                     <Form.Item
                                       name={[apartmentField.name, "number"]}
-                                      fieldKey={[apartmentField.fieldKey, "number"]}
+                                      fieldKey={[apartmentField.fieldKey!, "number"]}
                                       rules={[
                                         { required: true, message: "Apartment Number is required" },
                                       ]}
@@ -108,8 +124,7 @@ const DynamicForm = ({
                                     </Form.Item>
                                     <Form.Item
                                       name={[apartmentField.name, "family"]}
-                                      fieldKey={[apartmentField.fieldKey, "family"]}
-                                      rules={[{ required: false }]}
+                                      fieldKey={[apartmentField.fieldKey!, "family"]}
                                     >
                                       <Select
                                         placeholder="Select Family"
@@ -121,8 +136,7 @@ const DynamicForm = ({
                                     </Form.Item>
                                     <Form.Item
                                       name={[apartmentField.name, "service"]}
-                                      fieldKey={[apartmentField.fieldKey, "service"]}
-                                      rules={[{ required: false }]}
+                                      fieldKey={[apartmentField.fieldKey!, "service"]}
                                     >
                                       <Select
                                         placeholder="Select Service"
@@ -148,7 +162,7 @@ const DynamicForm = ({
                                   <Button
                                     type="default"
                                     danger
-                                    onClick={() => remove(fieldItem.name)}
+                                    onClick={() => remove(floorField.name)}
                                   >
                                     Remove Floor
                                   </Button>
@@ -185,8 +199,7 @@ const DynamicForm = ({
                           <Form.Item
                             {...restField}
                             name={[name, "fullName"]}
-                            fieldKey={[fieldKey, "fullName"]}
-                            rules={[{ required: false }]}
+                            fieldKey={[fieldKey!, "fullName"]}
                             style={{ flex: 2 }}
                           >
                             <Input placeholder="Full Name" />
@@ -194,8 +207,7 @@ const DynamicForm = ({
                           <Form.Item
                             {...restField}
                             name={[name, "age"]}
-                            fieldKey={[fieldKey, "age"]}
-                            rules={[{ required: false }]}
+                            fieldKey={[fieldKey!, "age"]}
                             style={{ flex: 1 }}
                           >
                             <Input type="number" placeholder="Age" />
@@ -203,8 +215,7 @@ const DynamicForm = ({
                           <Form.Item
                             {...restField}
                             name={[name, "role"]}
-                            fieldKey={[fieldKey, "role"]}
-                            rules={[{ required: false }]}
+                            fieldKey={[fieldKey!, "role"]}
                             style={{ flex: 2 }}
                           >
                             <Input placeholder="Role (e.g., Father, Mother, Child)" />
@@ -260,7 +271,13 @@ const DynamicForm = ({
                 rules={field.rules || [{ required: true, message: `${field.label} is required` }]}
               >
                 {field.name === "phone" ? (
-                  <Input type="number" />
+                  <Input
+                    type="text"
+                    value={phoneValue}
+                    onChange={handlePhoneChange}
+                    onBeforeInput={handleBeforeInput}
+                    onPaste={handlePaste}
+                  />
                 ) : (
                   <Input />
                 )}

@@ -13,7 +13,6 @@ import PartnerDetailsPage from "../../pages/PartnerDetailsPage";
 import CountriesPage from "../../pages/CountriesPage";
 
 const AppRouter: React.FC = () => {
-  // Add the type for function component
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
