@@ -1,4 +1,3 @@
-import React from "react";
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "../../components/Layout/MainLayout";
 
@@ -13,7 +12,8 @@ import ServiceDetailsPage from "../../pages/ServiceDetailsPage";
 import PartnerDetailsPage from "../../pages/PartnerDetailsPage";
 import CountriesPage from "../../pages/CountriesPage";
 
-const AppRouter = () => {
+const AppRouter: React.FC = () => {
+  // Add the type for function component
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
