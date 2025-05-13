@@ -11,11 +11,6 @@ import { StrictMode } from "react";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 
-<<<<<<< HEAD
-=======
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
-
->>>>>>> f6195a07d69f6fcd4605a678b0adc8916db358ec
 root.render(
   <StrictMode>
     <Provider store={store}>

@@ -95,7 +95,7 @@ const PartnerDetailsPage = () => {
           },
           { name: "phone", label: "Phone", rules: [{ required: true }], type: "text" },
         ]}
-        families={[]} // required props if using shared DynamicForm
+        families={[]} 
         services={[]}
         partners={[]}
       />

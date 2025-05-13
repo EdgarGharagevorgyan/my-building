@@ -5,17 +5,6 @@ import familiesReducer from "../../features/families/familiesSlice";
 import servicesReducer from "../../features/services/servicesSlice";
 import partnersReducer from "../../features/partners/partnersSlice";
 
-<<<<<<< HEAD
-
-=======
-export interface RootState {
-  dashboard: ReturnType<typeof dashboardReducer>;
-  buildings: ReturnType<typeof buildingsReducer>;
-  families: ReturnType<typeof familiesReducer>;
-  services: ReturnType<typeof servicesReducer>;
-  partners: ReturnType<typeof partnersReducer>;
-}
->>>>>>> f6195a07d69f6fcd4605a678b0adc8916db358ec
 
 export const store = configureStore({
   reducer: {
@@ -27,11 +16,8 @@ export const store = configureStore({
   },
 });
 
-<<<<<<< HEAD
 export type RootState = ReturnType<typeof store.getState>;
 
-=======
->>>>>>> f6195a07d69f6fcd4605a678b0adc8916db358ec
 export type AppDispatch = typeof store.dispatch;
 
 export default store;
