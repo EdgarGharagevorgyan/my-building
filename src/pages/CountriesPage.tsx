@@ -1,21 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, KeyboardEvent } from "react";
 import axios from "axios";
 import { Table, Input, Space, Button, Spin } from "antd";
 import { Search } from "lucide-react";
+import type { ColumnsType } from "antd/es/table";
 
-const stripPlus = (str) => str.replace(/^\+/, "");
+interface Country {
+  name: {
+    official?: string;
+    common?: string;
+  };
+  capital?: string[];
+  languages?: Record<string, string>;
+  currencies?: Record<string, { name: string }>;
+  idd?: {
+    root?: string;
+    suffixes?: string[];
+  };
+}
 
-const CountriesPage = () => {
-  const [allCountries, setAllCountries] = useState([]);
-  const [displayData, setDisplayData] = useState([]);
-  const [inputValue, setInputValue] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [loading, setLoading] = useState(false);
+const stripPlus = (str: string): string => str.replace(/^\+/, "");
+
+const CountriesPage: React.FC = () => {
+  const [allCountries, setAllCountries] = useState<Country[]>([]);
+  const [displayData, setDisplayData] = useState<Country[]>([]);
+  const [inputValue, setInputValue] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
     axios
-      .get("https://restcountries.com/v3.1/all")
+      .get<Country[]>("https://restcountries.com/v3.1/all")
       .then((response) => {
         setAllCountries(response.data);
         setDisplayData(response.data);
@@ -43,15 +58,15 @@ const CountriesPage = () => {
       `https://restcountries.com/v3.1/currency/${encodeURIComponent(query)}`,
     ];
 
-    Promise.allSettled(endpoints.map((url) => axios.get(url)))
+    Promise.allSettled(endpoints.map((url) => axios.get<Country[]>(url)))
       .then((results) => {
-        const merged = [];
-        const seen = new Set();
+        const merged: Country[] = [];
+        const seen = new Set<string>();
         results.forEach((r) => {
           if (r.status === "fulfilled") {
             r.value.data.forEach((country) => {
               const key = country.name?.official || country.name?.common;
-              if (!seen.has(key)) {
+              if (key && !seen.has(key)) {
                 seen.add(key);
                 merged.push(country);
               }
@@ -68,7 +83,7 @@ const CountriesPage = () => {
             const code = stripPlus(internationalDirectDialing).toLowerCase();
             if (code.includes(queryString)) {
               const key = country.name?.official || country.name?.common;
-              if (!seen.has(key)) {
+              if (key && !seen.has(key)) {
                 seen.add(key);
                 merged.push(country);
               }
@@ -81,7 +96,7 @@ const CountriesPage = () => {
       .finally(() => setLoading(false));
   }, [searchTerm, allCountries]);
 
-  const columns = [
+  const columns: ColumnsType<Country> = [
     {
       title: "Full Name",
       dataIndex: ["name", "official"],
@@ -92,7 +107,7 @@ const CountriesPage = () => {
       title: "Capital",
       dataIndex: "capital",
       key: "capital",
-      render: (cap) => cap?.[0] || "-",
+      render: (cap: string[] | undefined) => cap?.[0] || "-",
     },
     {
       title: "Language",
@@ -119,13 +134,13 @@ const CountriesPage = () => {
     },
   ];
 
-  const handleSearch = () => {
+  const handleSearch = (): void => {
     if (inputValue.trim() !== "") {
       setSearchTerm(inputValue);
     }
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === "Enter" && inputValue.trim() !== "") {
       handleSearch();
     }
@@ -153,7 +168,7 @@ const CountriesPage = () => {
           <Table
             columns={columns}
             dataSource={displayData}
-            rowKey={(record) => record.name?.official || record.name?.common}
+            rowKey={(record) => record.name?.official || record.name?.common || "unknown"}
             bordered
           />
         )}

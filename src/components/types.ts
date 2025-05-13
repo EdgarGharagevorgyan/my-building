@@ -1,5 +1,19 @@
 import { Rule } from "antd/es/form";
 
+export interface DashboardState {
+  totalBuildings: number;
+  totalFamilies: number;
+  totalServices: number;
+  totalPartners: number;
+}
+
+export interface DashboardDataPayload {
+  totalBuildings: number;
+  totalFamilies: number;
+  totalServices: number;
+  totalPartners: number;
+}
+
 export interface Building {
   id: string;
   name: string;
@@ -19,8 +33,8 @@ export interface Floor {
 export interface Apartment {
   id: string;
   number: number;
-  family: string | null;
-  service: string | null;
+  family?: Family | string | null;
+  service?: Service | string | null;
 }
 
 
@@ -41,17 +55,37 @@ export interface Member {
   updatedAt: string;
 }
 
+export interface FormValues {
+  [key: string]: any;
+  id?: string;
+  name?: string;
+  companyName?: string;
+  contactPerson?: string;
+  phone?: string;
+  partner?: string;
+  floors?: Floor[];
+  members?: Member[];
+}
+
 export interface Service {
   id: string;
   name: string;
-  partner: Partner;
+  partner?: Partner;
+}
+
+export interface ServicesState {
+  services: Service[];
 }
 
 export interface Partner {
   id: string;
-  name: string;
+  companyName: string;
   contactPerson: string;
   phone: string;
+}
+
+export interface PartnersState {
+  partners: Partner[];
 }
 
 export interface Field {
@@ -60,14 +94,7 @@ export interface Field {
   type: "text" | "select" | "list";
   rules?: Rule[];
   options?: { label: string; value: string }[];
-}
-
-export interface FormValues {
-  [key: string]: any;
-  floors?: Floor[];
-  members?: Member[];
-  partner?: string;
-  phone?: string;
+  nested?: boolean;
 }
 
 export interface DynamicFormProps {
@@ -81,4 +108,11 @@ export interface DynamicFormProps {
   families: Family[];
   services: Service[];
   partners: Partner[];
+}
+
+export interface PartnerTableRow {
+  id: string;
+  companyName: string;
+  contactPerson: string;
+  phone: string;
 }

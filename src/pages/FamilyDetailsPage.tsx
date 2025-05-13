@@ -4,22 +4,27 @@ import { Card, Button, Table, Space, Popconfirm } from "antd";
 import { useState } from "react";
 import DynamicForm from "../components/DynamicForm";
 import { updateFamily, deleteFamily } from "../features/families/familiesSlice";
+import type { RootState } from "../app/store/store";
+import type { Family, Member, FormValues } from "../components/types";
 
 const FamilyDetailsPage = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const family = useSelector((state) => state.families.families.find((f) => f.id === parseInt(id)));
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const family = useSelector((state: RootState) =>
+    state.families.families.find((f) => f.id === id)
+  );
+
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   if (!family) {
     return <p>Family not found!</p>;
   }
 
-  const formatDate = (isoString) => {
-    if (!isoString) return "N/A"; 
-    const options = {
+  const formatDate = (isoString?: string): string => {
+    if (!isoString) return "N/A";
+    const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -30,15 +35,15 @@ const FamilyDetailsPage = () => {
     return new Intl.DateTimeFormat("en-GB", options).format(new Date(isoString));
   };
 
-  const handleEdit = (values) => {
+  const handleEdit = (values: FormValues) => {
     const timestamp = new Date().toISOString();
-    const updatedMembers = values.members.map((member) => ({
+    const updatedMembers: Member[] = (values.members || []).map((member) => ({
       ...member,
       createdAt: member.createdAt || timestamp,
       updatedAt: timestamp,
     }));
 
-    const updatedFamily = {
+    const updatedFamily: Family = {
       ...family,
       ...values,
       members: updatedMembers,
@@ -59,33 +64,35 @@ const FamilyDetailsPage = () => {
       title: "Full Name",
       dataIndex: "fullName",
       key: "fullName",
-      sorter: (a, b) => a.fullName.localeCompare(b.fullName),
+      sorter: (a: Member, b: Member) => a.fullName.localeCompare(b.fullName),
     },
     {
       title: "Age",
       dataIndex: "age",
       key: "age",
-      sorter: (a, b) => a.age - b.age,
+      sorter: (a: Member, b: Member) => a.age - b.age,
     },
     {
       title: "Role",
       dataIndex: "role",
       key: "role",
-      sorter: (a, b) => a.role.localeCompare(b.role),
+      sorter: (a: Member, b: Member) => a.role.localeCompare(b.role),
     },
     {
       title: "Created At",
       dataIndex: "createdAt",
       key: "createdAt",
-      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
-      render: (text) => formatDate(text),
+      sorter: (a: Member, b: Member) =>
+        new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime(),
+      render: (text: string) => formatDate(text),
     },
     {
       title: "Updated At",
       dataIndex: "updatedAt",
       key: "updatedAt",
-      sorter: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt),
-      render: (text) => formatDate(text),
+      sorter: (a: Member, b: Member) =>
+        new Date(a.updatedAt!).getTime() - new Date(b.updatedAt!).getTime(),
+      render: (text: string) => formatDate(text),
     },
   ];
 
@@ -110,13 +117,13 @@ const FamilyDetailsPage = () => {
             title: "Created At",
             dataIndex: "createdAt",
             key: "createdAt",
-            render: (text) => formatDate(text),
+            render: (text: string) => formatDate(text),
           },
           {
             title: "Updated At",
             dataIndex: "updatedAt",
             key: "updatedAt",
-            render: (text) => formatDate(text),
+            render: (text: string) => formatDate(text),
           },
         ]}
         pagination={false}
@@ -127,11 +134,7 @@ const FamilyDetailsPage = () => {
         <Table
           dataSource={family.members.map((member, index) => ({
             key: index,
-            fullName: member.fullName,
-            age: member.age,
-            role: member.role,
-            createdAt: member.createdAt,
-            updatedAt: member.updatedAt,
+            ...member,
           }))}
           columns={columns}
           pagination={false}
@@ -172,7 +175,12 @@ const FamilyDetailsPage = () => {
         mode="edit"
         title="Edit Family"
         fields={[
-          { name: "name", label: "Family Name", rules: [{ required: true }] },
+          {
+            name: "name",
+            label: "Family Name",
+            type: "text",
+            rules: [{ required: true }],
+          },
           {
             name: "members",
             label: "Members",
@@ -180,6 +188,9 @@ const FamilyDetailsPage = () => {
             nested: true,
           },
         ]}
+        families={useSelector((state: RootState) => state.families.families)}
+        services={useSelector((state: RootState) => state.services.services)}
+        partners={useSelector((state: RootState) => state.partners.partners)}
       />
     </div>
   );

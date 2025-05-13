@@ -1,7 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Partner, PartnersState } from "../../components/types";
 import { mockPartners } from "../../devData/mockData";
 
-const initialState = {
+const initialState: PartnersState = {
   partners: mockPartners,
 };
 
@@ -9,19 +10,19 @@ const partnersSlice = createSlice({
   name: "partners",
   initialState,
   reducers: {
-    setPartners: (state, action) => {
+    setPartners: (state, action: PayloadAction<Partner[]>) => {
       state.partners = action.payload;
     },
-    addPartner: (state, action) => {
+    addPartner: (state, action: PayloadAction<Partner>) => {
       state.partners.push(action.payload);
     },
-    updatePartner: (state, action) => {
+    updatePartner: (state, action: PayloadAction<Partner>) => {
       const index = state.partners.findIndex((partner) => partner.id === action.payload.id);
       if (index !== -1) {
         state.partners[index] = action.payload;
       }
     },
-    deletePartner: (state, action) => {
+    deletePartner: (state, action: PayloadAction<string>) => {
       state.partners = state.partners.filter((partner) => partner.id !== action.payload);
     },
   },

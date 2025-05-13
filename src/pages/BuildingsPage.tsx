@@ -1,27 +1,34 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Table, Button, Space, Popconfirm, Input } from "antd";
-import { addBuilding, updateBuilding, deleteBuilding } from "../features/buildings/buildingsSlice";
 import { useNavigate } from "react-router-dom";
+import { ColumnsType } from "antd/es/table";
+
+import { addBuilding, updateBuilding, deleteBuilding } from "../features/buildings/buildingsSlice";
 import DynamicForm from "../components/DynamicForm";
+import { RootState } from "../app/store/store";
+import { Building, Family, Service, FormValues } from "../components/types";
 
 const BuildingsPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const buildings = useSelector((state) => state.buildings.buildings);
-  const services = useSelector((state) => state.services.services);
-  const families = useSelector((state) => state.families.families);
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [formMode, setFormMode] = useState("add");
-  const [currentBuilding, setCurrentBuilding] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const buildings = useSelector((state: RootState) => state.buildings.buildings);
+  const families = useSelector((state: RootState) => state.families.families);
+  const services = useSelector((state: RootState) => state.services.services);
+  const partners = useSelector((state: RootState) => state.partners.partners);
+
+
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [formMode, setFormMode] = useState<"add" | "edit">("add");
+  const [currentBuilding, setCurrentBuilding] = useState<Building | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const filteredBuildings = buildings.filter((building) =>
     building.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const columns = [
+  const columns: ColumnsType<Building> = [
     {
       title: "Building Name",
       dataIndex: "name",
@@ -39,7 +46,7 @@ const BuildingsPage = () => {
         <Space size="middle">
           <Button
             onClick={(e) => {
-              e.stopPropagation(); 
+              e.stopPropagation();
               setFormMode("edit");
               setCurrentBuilding(record);
               setIsModalVisible(true);
@@ -51,17 +58,13 @@ const BuildingsPage = () => {
           <Popconfirm
             title="Are you sure to delete this building?"
             onConfirm={(e) => {
-              e.stopPropagation(); 
-              dispatch(deleteBuilding(record.id)); 
+              e?.stopPropagation();
+              dispatch(deleteBuilding(record.id));
             }}
             okText="Yes"
             cancelText="No"
           >
-            <Button
-              type="primary"
-              danger
-              onClick={(e) => e.stopPropagation()} 
-            >
+            <Button type="primary" danger onClick={(e) => e.stopPropagation()}>
               Delete
             </Button>
           </Popconfirm>
@@ -76,31 +79,37 @@ const BuildingsPage = () => {
     setIsModalVisible(true);
   };
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = (values: FormValues) => {
     const currentTimestamp = new Date().toISOString();
 
-    const processedValues = {
-      ...values,
-      createdAt: formMode === "add" ? currentTimestamp : currentBuilding.createdAt,
+    const processedValues: Building = {
+      ...(formMode === "edit" && currentBuilding
+        ? { id: currentBuilding.id }
+        : { id: Date.now().toString() }),
+      name: values.name || "",
+      address: values.address,
+      createdAt:
+        formMode === "add" ? currentTimestamp : currentBuilding?.createdAt || currentTimestamp,
       updatedAt: currentTimestamp,
-      floors: values.floors?.map((floor, index) => ({
-        id: floor.id || Date.now() + index,
-        number: index + 1,
-        apartments: floor.apartments?.map((apartment, aptIndex) => ({
-          id: apartment.id || Date.now() + aptIndex,
-          number: apartment.number,
-          family: families.find((f) => f.id === apartment.family) || null, 
-          service: services.find((s) => s.id === apartment.service) || null, 
-        })),
-      })),
       services: values.services || [],
+      floors:
+        values.floors?.map((floor, index) => ({
+          id: floor.id || `${Date.now()}_${index}`,
+          number: index + 1,
+          apartments:
+            floor.apartments?.map((apartment, aptIndex) => ({
+              id: apartment.id || `${Date.now()}_${aptIndex}`,
+              number: apartment.number,
+              family: apartment.family,
+              service: apartment.service,
+            })) || [],
+        })) || [],
     };
 
     if (formMode === "add") {
-      const newBuildingId = Date.now();
-      dispatch(addBuilding({ id: newBuildingId, ...processedValues }));
+      dispatch(addBuilding(processedValues));
     } else if (formMode === "edit") {
-      dispatch(updateBuilding({ ...currentBuilding, ...processedValues }));
+      dispatch(updateBuilding(processedValues));
     }
 
     setIsModalVisible(false);
@@ -138,8 +147,8 @@ const BuildingsPage = () => {
         mode={formMode}
         title={formMode === "edit" ? "Edit Building" : "Add Building"}
         fields={[
-          { name: "name", label: "Building Name", rules: [{ required: true }] },
-          { name: "address", label: "Address", rules: [{ required: true }] },
+          { name: "name", label: "Building Name", type: "text", rules: [{ required: true }] },
+          { name: "address", label: "Address", type: "text", rules: [{ required: true }] },
           {
             name: "floors",
             label: "Floors",
@@ -147,8 +156,9 @@ const BuildingsPage = () => {
             nested: true,
           },
         ]}
-        families={families} // Pass families as a prop for the dropdown
+        families={families}
         services={services}
+        partners={partners}
       />
     </div>
   );

@@ -4,23 +4,27 @@ import { Card, Button, Table, Space } from "antd";
 import { useState } from "react";
 import DynamicForm from "../components/DynamicForm";
 import { updatePartner } from "../features/partners/partnersSlice";
+import { RootState } from "../app/store/store";
+import { Partner, FormValues, PartnerTableRow } from "../components/types";
 
 const PartnerDetailsPage = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const partner = useSelector((state) =>
-    state.partners.partners.find((p) => p.id === parseInt(id))
+
+  const partner = useSelector((state: RootState) =>
+    state.partners.partners.find((p) => p.id === id)
   );
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
   if (!partner) {
     return <p>Partner not found!</p>;
   }
 
-  const handleEdit = (values) => {
-    dispatch(updatePartner({ ...partner, ...values }));
+  const handleEdit = (values: FormValues) => {
+    const updatedPartner: Partner = { ...partner, ...values };
+    dispatch(updatePartner(updatedPartner));
     setIsModalVisible(false);
   };
 
@@ -28,26 +32,28 @@ const PartnerDetailsPage = () => {
     {
       title: "Company Name",
       dataIndex: "companyName",
-      key: "companyName",
-      sorter: (a, b) => a.companyName.localeCompare(b.companyName),
+      id: "companyName",
+      sorter: (a: PartnerTableRow, b: PartnerTableRow) =>
+        a.companyName.localeCompare(b.companyName),
     },
     {
       title: "Contact Person",
       dataIndex: "contactPerson",
-      key: "contactPerson",
-      sorter: (a, b) => a.contactPerson.localeCompare(b.contactPerson),
+      id: "contactPerson",
+      sorter: (a: PartnerTableRow, b: PartnerTableRow) =>
+        a.contactPerson.localeCompare(b.contactPerson),
     },
     {
       title: "Phone",
       dataIndex: "phone",
-      key: "phone",
-      sorter: (a, b) => a.phone.localeCompare(b.phone),
+      id: "phone",
+      sorter: (a: PartnerTableRow, b: PartnerTableRow) => a.phone.localeCompare(b.phone),
     },
   ];
 
-  const tableData = [
+  const tableData: PartnerTableRow[] = [
     {
-      key: partner.id,
+      id: partner.id,
       companyName: partner.companyName,
       contactPerson: partner.contactPerson,
       phone: partner.phone,
@@ -80,10 +86,18 @@ const PartnerDetailsPage = () => {
         mode="edit"
         title="Edit Partner"
         fields={[
-          { name: "companyName", label: "Company Name", rules: [{ required: true }] },
-          { name: "contactPerson", label: "Contact Person", rules: [{ required: true }] },
-          { name: "phone", label: "Phone", rules: [{ required: true }] },
+          { name: "companyName", label: "Company Name", rules: [{ required: true }], type: "text" },
+          {
+            name: "contactPerson",
+            label: "Contact Person",
+            rules: [{ required: true }],
+            type: "text",
+          },
+          { name: "phone", label: "Phone", rules: [{ required: true }], type: "text" },
         ]}
+        families={[]} // required props if using shared DynamicForm
+        services={[]}
+        partners={[]}
       />
     </div>
   );

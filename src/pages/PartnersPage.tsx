@@ -1,19 +1,22 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Table, Button, Space, Popconfirm, Input } from "antd";
-import { addPartner, updatePartner, deletePartner } from "../features/partners/partnersSlice";
 import { useNavigate } from "react-router-dom";
 import DynamicForm from "../components/DynamicForm";
+import { addPartner, updatePartner, deletePartner } from "../features/partners/partnersSlice";
+import { RootState } from "../app/store/store";
+import { Partner, FormValues } from "../components/types";
 
 const PartnersPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const partners = useSelector((state) => state.partners.partners);
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [formMode, setFormMode] = useState("add");
-  const [currentPartner, setCurrentPartner] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const partners = useSelector((state: RootState) => state.partners.partners);
+
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [formMode, setFormMode] = useState<"add" | "edit">("add");
+  const [currentPartner, setCurrentPartner] = useState<Partner | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const filteredPartners = partners.filter((partner) =>
     partner.companyName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -38,11 +41,11 @@ const PartnersPage = () => {
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
+      render: (_: any, record: Partner) => (
         <Space size="middle">
           <Button
             onClick={(e) => {
-              e.stopPropagation(); 
+              e.stopPropagation();
               setFormMode("edit");
               setCurrentPartner(record);
               setIsModalVisible(true);
@@ -54,17 +57,13 @@ const PartnersPage = () => {
           <Popconfirm
             title="Are you sure to delete this partner?"
             onConfirm={(e) => {
-              e.stopPropagation(); 
+              e?.stopPropagation();
               dispatch(deletePartner(record.id));
             }}
             okText="Yes"
             cancelText="No"
           >
-            <Button
-              type="primary"
-              danger
-              onClick={(e) => e.stopPropagation()} 
-            >
+            <Button type="primary" danger onClick={(e) => e.stopPropagation()}>
               Delete
             </Button>
           </Popconfirm>
@@ -75,14 +74,28 @@ const PartnersPage = () => {
 
   const handleAddPartner = () => {
     setFormMode("add");
+    setCurrentPartner(null);
     setIsModalVisible(true);
   };
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = (values: FormValues) => {
     if (formMode === "add") {
-      dispatch(addPartner({ id: Date.now(), ...values }));
-    } else if (formMode === "edit") {
-      dispatch(updatePartner({ ...currentPartner, ...values }));
+      const newPartner: Partner = {
+        id: Date.now().toString(),
+        companyName: values.companyName || "",
+        contactPerson: values.contactPerson || "",
+        phone: values.phone || "",
+      };
+      dispatch(addPartner(newPartner));
+    } else if (formMode === "edit" && currentPartner) {
+      const updatedPartner: Partner = {
+        ...currentPartner,
+        ...values,
+        companyName: values.companyName || currentPartner.companyName,
+        contactPerson: values.contactPerson || currentPartner.contactPerson,
+        phone: values.phone || currentPartner.phone,
+      };
+      dispatch(updatePartner(updatedPartner));
     }
     setIsModalVisible(false);
   };
@@ -119,10 +132,18 @@ const PartnersPage = () => {
         mode={formMode}
         title={formMode === "edit" ? "Edit Partner" : "Add Partner"}
         fields={[
-          { name: "companyName", label: "Company Name", rules: [{ required: true }] },
-          { name: "contactPerson", label: "Contact Person", rules: [{ required: true }] },
-          { name: "phone", label: "Phone", rules: [{ required: true }] },
+          { name: "companyName", label: "Company Name", type: "text", rules: [{ required: true }] },
+          {
+            name: "contactPerson",
+            label: "Contact Person",
+            type: "text",
+            rules: [{ required: true }],
+          },
+          { name: "phone", label: "Phone", type: "text", rules: [{ required: true }] },
         ]}
+        partners={partners}
+        families={[]}
+        services={[]}
       />
     </div>
   );

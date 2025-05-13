@@ -1,19 +1,24 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import type { RootState } from "../app/store/store"; 
 import { Table, Button, Space, Popconfirm, Input } from "antd";
 import { addFamily, updateFamily, deleteFamily } from "../features/families/familiesSlice";
 import { useNavigate } from "react-router-dom";
 import DynamicForm from "../components/DynamicForm";
+import type { Family, FormValues } from "../components/types";
 
 const FamiliesPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const families = useSelector((state) => state.families.families);
 
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [formMode, setFormMode] = useState("add");
-  const [currentFamily, setCurrentFamily] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const families = useSelector((state: RootState) => state.families.families);
+  const services = useSelector((state: RootState) => state.services.services);
+  const partners = useSelector((state: RootState) => state.partners.partners);
+
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [formMode, setFormMode] = useState<"add" | "edit">("add");
+  const [currentFamily, setCurrentFamily] = useState<Family | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   const filteredFamilies = families.filter((family) =>
     family.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -28,11 +33,11 @@ const FamiliesPage = () => {
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
+      render: (_: unknown, record: Family) => (
         <Space size="middle">
           <Button
             onClick={(e) => {
-              e.stopPropagation(); 
+              e.stopPropagation();
               setFormMode("edit");
               setCurrentFamily(record);
               setIsModalVisible(true);
@@ -43,18 +48,13 @@ const FamiliesPage = () => {
           </Button>
           <Popconfirm
             title="Are you sure to delete this family?"
-            onConfirm={(e) => {
-              e.stopPropagation(); 
+            onConfirm={() => {
               dispatch(deleteFamily(record.id));
             }}
             okText="Yes"
             cancelText="No"
           >
-            <Button
-              type="primary"
-              danger
-              onClick={(e) => e.stopPropagation()} 
-            >
+            <Button type="primary" danger onClick={(e) => e.stopPropagation()}>
               Delete
             </Button>
           </Popconfirm>
@@ -69,13 +69,15 @@ const FamiliesPage = () => {
     setIsModalVisible(true);
   };
 
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = (values: FormValues) => {
     const timestamp = new Date().toISOString();
-    const familyData = {
+    const familyData: Family = {
       ...values,
-      createdAt: formMode === "add" ? timestamp : currentFamily.createdAt,
+      name: values.name || "",
+      id: formMode === "add" ? Date.now().toString() : currentFamily!.id,
+      createdAt: formMode === "add" ? timestamp : currentFamily!.createdAt,
       updatedAt: timestamp,
-      members: values.members.map((member) => ({
+      members: (values.members || []).map((member) => ({
         ...member,
         createdAt: member.createdAt || timestamp,
         updatedAt: timestamp,
@@ -83,9 +85,9 @@ const FamiliesPage = () => {
     };
 
     if (formMode === "add") {
-      dispatch(addFamily({ id: Date.now(), ...familyData }));
+      dispatch(addFamily(familyData));
     } else if (formMode === "edit") {
-      dispatch(updateFamily({ ...currentFamily, ...familyData }));
+      dispatch(updateFamily(familyData));
     }
     setIsModalVisible(false);
   };
@@ -122,14 +124,12 @@ const FamiliesPage = () => {
         mode={formMode}
         title={formMode === "edit" ? "Edit Family" : "Add Family"}
         fields={[
-          { name: "name", label: "Family Name", rules: [{ required: true }] },
-          {
-            name: "members",
-            label: "Members",
-            type: "list",
-            nested: true,
-          },
+          { name: "name", label: "Family Name", type: "text", rules: [{ required: true }] },
+          { name: "members", label: "Members", type: "list", nested: true },
         ]}
+        families={families}
+        services={services}
+        partners={partners}
       />
     </div>
   );

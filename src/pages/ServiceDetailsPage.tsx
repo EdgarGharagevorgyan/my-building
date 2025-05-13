@@ -4,15 +4,18 @@ import { Card, Button, Table, Space } from "antd";
 import { useState } from "react";
 import DynamicForm from "../components/DynamicForm";
 import { updateService } from "../features/services/servicesSlice";
+import { RootState } from "../app/store/store";
+import { Partner, Service, FormValues } from "../components/types";
 
 const ServiceDetailsPage = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const service = useSelector((state) =>
-    state.services.services.find((s) => s.id === parseInt(id))
+
+  const service = useSelector((state: RootState) =>
+    state.services.services.find((s: Service) => s.id === id)
   );
-  const partners = useSelector((state) => state.partners.partners); 
+  const partners = useSelector((state: RootState) => state.partners.partners);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -20,18 +23,20 @@ const ServiceDetailsPage = () => {
     return <p>Service not found!</p>;
   }
 
-  const handleEdit = (values) => {
-    const selectedPartner = partners.find((partner) => partner.id === values.partner);
+  const handleEdit = (values: FormValues) => {
+    const selectedPartner = partners.find((partner: Partner) => partner.id === values.partner);
 
-    const updatedService = {
+    if (!selectedPartner) return;
+
+    const updatedService: Service = {
       ...service,
       ...values,
-      partner: selectedPartner, 
+      partner: selectedPartner,
     };
 
     dispatch(updateService(updatedService));
     setIsModalVisible(false);
-    navigate(`/services`); 
+    navigate(`/services`);
   };
 
   const columns = [
@@ -39,37 +44,37 @@ const ServiceDetailsPage = () => {
       title: "Service Name",
       dataIndex: "name",
       key: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
     },
     {
       title: "Partner",
       dataIndex: "partnerName",
       key: "partnerName",
-      sorter: (a, b) => a.partnerName.localeCompare(b.partnerName),
+      sorter: (a: any, b: any) => a.partnerName.localeCompare(b.partnerName),
     },
     {
       title: "Contact Person",
       dataIndex: "contactPerson",
       key: "contactPerson",
-      sorter: (a, b) => a.contactPerson.localeCompare(b.contactPerson),
+      sorter: (a: any, b: any) => a.contactPerson.localeCompare(b.contactPerson),
     },
     {
       title: "Phone",
       dataIndex: "phone",
       key: "phone",
-      sorter: (a, b) => a.phone.localeCompare(b.phone),
+      sorter: (a: any, b: any) => a.phone.localeCompare(b.phone),
     },
   ];
+
+  const partnerDetails = partners.find((p) => p.id === service.partner?.id);
 
   const tableData = [
     {
       key: service.id,
       name: service.name,
-      partnerName:
-        partners.find((partner) => partner.id === service.partner.id)?.companyName || "N/A",
-      contactPerson:
-        partners.find((partner) => partner.id === service.partner.id)?.contactPerson || "N/A",
-      phone: partners.find((partner) => partner.id === service.partner.id)?.phone || "N/A",
+      partnerName: partnerDetails?.companyName || "N/A",
+      contactPerson: partnerDetails?.contactPerson || "N/A",
+      phone: partnerDetails?.phone || "N/A",
     },
   ];
 
@@ -100,7 +105,7 @@ const ServiceDetailsPage = () => {
         mode="edit"
         title="Edit Service"
         fields={[
-          { name: "name", label: "Service Name", rules: [{ required: true }] },
+          { name: "name", label: "Service Name", type: "text", rules: [{ required: true }] },
           {
             name: "partner",
             label: "Partner",
@@ -110,10 +115,22 @@ const ServiceDetailsPage = () => {
               value: partner.id,
             })),
           },
-          { name: "contactPerson", label: "Contact Person", rules: [{ required: true }] },
-          { name: "phone", label: "Phone", rules: [{ required: true }] },
+          {
+            name: "contactPerson",
+            label: "Contact Person",
+            type: "text",
+            rules: [{ required: true }],
+          },
+          {
+            name: "phone",
+            label: "Phone",
+            type: "text",
+            rules: [{ required: true }],
+          },
         ]}
-        partners={partners} 
+        partners={partners}
+        services={useSelector((state: RootState) => state.services.services)}
+        families={useSelector((state: RootState) => state.families.families)}
       />
     </div>
   );

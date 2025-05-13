@@ -34,8 +34,8 @@ const Header: React.FC<HeaderProps> = ({ collapsed, toggleCollapsed }) => {
           }}
         />
         <h1 style={{ margin: 0 }}>Building Management System</h1>
+        <h1 style={{ margin: 0 }}>BMS</h1>
       </div>
-      <h1 style={{ margin: 0 }}>BMS</h1>
     </AntHeader>
   );
 };
