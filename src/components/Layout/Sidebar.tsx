@@ -1,11 +1,17 @@
 import { Layout, Menu } from "antd";
 import { Link } from "react-router-dom";
+import type { MenuProps } from "antd";
 import { LayoutDashboard, Building2, Users, HandPlatter, Handshake, Flag } from "lucide-react";
 
 const { Sider } = Layout;
 
-const Sidebar = ({ collapsed, currentPath }) => {
-  const menuItems = [
+interface SidebarProps {
+  collapsed: boolean;
+  currentPath: string;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ collapsed, currentPath }) => {
+  const menuItems: MenuProps["items"] = [
     {
       key: "/",
       icon: <LayoutDashboard />,
@@ -57,4 +63,3 @@ const Sidebar = ({ collapsed, currentPath }) => {
 };
 
 export default Sidebar;
-

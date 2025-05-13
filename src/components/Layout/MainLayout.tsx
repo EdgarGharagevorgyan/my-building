@@ -5,26 +5,27 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Content from "./Content";
 
-const MainLayout = () => {
-  const [collapsed, setCollapsed] = useState(true);
+const {Content: AntContent } = Layout;
+
+const MainLayout: React.FC = () => {
+  const [collapsed, setCollapsed] = useState<boolean>(true);
   const location = useLocation();
 
-  const toggleCollapsed = () => {
-    setCollapsed((prev) => !prev);
-  };
+  const toggleCollapsed = () => setCollapsed((prev) => !prev);
 
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sidebar collapsed={collapsed} currentPath={location.pathname} />
-
       <Layout
         style={{
           marginLeft: collapsed ? 80 : 200,
-          transition: "margin-left 0.2s",
+          transition: "margin-left 0.2s ease",
         }}
       >
         <Header collapsed={collapsed} toggleCollapsed={toggleCollapsed} />
-        <Content />
+        <AntContent style={{ padding: "24px" }}>
+          <Content />
+        </AntContent>
       </Layout>
     </Layout>
   );

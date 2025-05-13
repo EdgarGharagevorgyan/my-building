@@ -7,13 +7,16 @@ import { BrowserRouter } from "react-router-dom";
 import "./assets/styles/index.css";
 import "@ant-design/v5-patch-for-react-19";
 import "antd/dist/reset.css";
+import { StrictMode } from "react";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 
 root.render(
-  <Provider store={store}>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </Provider>
+  <StrictMode>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </Provider>
+  </StrictMode>
 );

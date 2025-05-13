@@ -8,7 +8,7 @@ const MemberList: React.FC = () => (
         {fields.map(({ key, name, fieldKey, ...restField }) => (
           <div
             key={key}
-            style={{ display: "flex", gap: "16px", marginBottom: "16px", alignItems: "center" }}
+            style={{ display: "flex", gap: "16px", marginBottom: "16px", alignItems: "start"}}
           >
             <Form.Item {...restField} name={[name, "fullName"]} style={{ flex: 2 }}>
               <Input placeholder="Full Name" />
@@ -19,7 +19,7 @@ const MemberList: React.FC = () => (
             <Form.Item {...restField} name={[name, "role"]} style={{ flex: 2 }}>
               <Input placeholder="Role (e.g., Father, Mother, Child)" />
             </Form.Item>
-            <Button type="link" danger onClick={() => remove(name)} style={{ flex: 0 }}>
+            <Button type="default" danger onClick={() => remove(name)} style={{ flex: 0 }}>
               Remove
             </Button>
           </div>

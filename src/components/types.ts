@@ -1,13 +1,50 @@
 import { Rule } from "antd/es/form";
 
+export interface Building {
+  id: string;
+  name: string;
+  address: string;
+  floors: Floor[];
+  services: string[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Floor {
+  id: string;
+  number: number;
+  apartments: Apartment[];
+}
+
+export interface Apartment {
+  id: string;
+  number: number;
+  family: string | null;
+  service: string | null;
+}
+
+
 export interface Family {
   id: string;
   name: string;
+  members: Member[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Member {
+  id: string;
+  fullName: string;
+  age: number;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface Service {
   id: string;
   name: string;
+  partner: Partner;
 }
 
 export interface Partner {
@@ -23,22 +60,6 @@ export interface Field {
   type: "text" | "select" | "list";
   rules?: Rule[];
   options?: { label: string; value: string }[];
-}
-
-export interface Apartment {
-  number: string;
-  family: string;
-  service: string;
-}
-
-export interface Floor {
-  apartments: Apartment[];
-}
-
-export interface Member {
-  fullName: string;
-  age: number;
-  role: string;
 }
 
 export interface FormValues {
