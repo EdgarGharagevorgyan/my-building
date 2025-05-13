@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Card, Button, Table, Space } from "antd";
+import { Card, Button, Table, Space, Popconfirm } from "antd"; 
 import { useState } from "react";
 import DynamicForm from "../components/DynamicForm";
-import { updatePartner } from "../features/partners/partnersSlice";
+import { updatePartner, deletePartner } from "../features/partners/partnersSlice";
 import { RootState } from "../app/store/store";
 import { Partner, FormValues, PartnerTableRow } from "../components/types";
 
@@ -26,6 +26,13 @@ const PartnerDetailsPage = () => {
     const updatedPartner: Partner = { ...partner, ...values };
     dispatch(updatePartner(updatedPartner));
     setIsModalVisible(false);
+  };
+
+  const handleDelete = () => {
+    if (partner?.id) {
+      dispatch(deletePartner(partner.id));
+      navigate("/partners");
+    }
   };
 
   const columns = [
@@ -71,6 +78,14 @@ const PartnerDetailsPage = () => {
           <Button type="default" onClick={() => setIsModalVisible(true)}>
             Edit
           </Button>
+          <Popconfirm
+            title="Are you sure you want to delete this partner?"
+            onConfirm={handleDelete}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
         </Space>
       </div>
 
@@ -95,7 +110,7 @@ const PartnerDetailsPage = () => {
           },
           { name: "phone", label: "Phone", rules: [{ required: true }], type: "text" },
         ]}
-        families={[]} 
+        families={[]}
         services={[]}
         partners={[]}
       />

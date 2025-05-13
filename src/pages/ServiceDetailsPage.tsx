@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Card, Button, Table, Space } from "antd";
+import { Card, Button, Table, Space, Popconfirm } from "antd";
 import { useState } from "react";
 import DynamicForm from "../components/DynamicForm";
-import { updateService } from "../features/services/servicesSlice";
+import { updateService, deleteService } from "../features/services/servicesSlice";
 import { RootState } from "../app/store/store";
 import { Partner, Service, FormValues } from "../components/types";
 
@@ -15,6 +15,8 @@ const ServiceDetailsPage = () => {
   const service = useSelector((state: RootState) =>
     state.services.services.find((s: Service) => s.id === id)
   );
+  const services = useSelector((state: RootState) => state.services.services);
+  const families = useSelector((state: RootState) => state.families.families);
   const partners = useSelector((state: RootState) => state.partners.partners);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -36,7 +38,14 @@ const ServiceDetailsPage = () => {
 
     dispatch(updateService(updatedService));
     setIsModalVisible(false);
-    navigate(`/services`);
+    navigate("/services"); 
+  };
+
+  const handleDelete = () => {
+    if (service?.id) {
+      dispatch(deleteService(service.id));
+      navigate("/services"); 
+    }
   };
 
   const columns = [
@@ -83,12 +92,20 @@ const ServiceDetailsPage = () => {
       <Table columns={columns} dataSource={tableData} pagination={false} />
       <div style={{ marginTop: 16 }}>
         <Space>
-          <Button type="primary" onClick={() => navigate(`/services`)}>
+          <Button type="primary" onClick={() => navigate("/services")}>
             Return to Services
           </Button>
           <Button type="default" onClick={() => setIsModalVisible(true)}>
             Edit
           </Button>
+          <Popconfirm
+            title="Are you sure you want to delete this service?"
+            onConfirm={handleDelete}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button danger>Delete</Button>
+          </Popconfirm>
         </Space>
       </div>
 
@@ -129,8 +146,8 @@ const ServiceDetailsPage = () => {
           },
         ]}
         partners={partners}
-        services={useSelector((state: RootState) => state.services.services)}
-        families={useSelector((state: RootState) => state.families.families)}
+        services={services}
+        families={families}
       />
     </div>
   );

@@ -1,9 +1,9 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { Table, Button } from "antd";
+import { Table, Button, Popconfirm } from "antd";
 import { useState } from "react";
 import DynamicForm from "../components/DynamicForm";
-import { updateBuilding } from "../features/buildings/buildingsSlice";
+import { updateBuilding, deleteBuilding } from "../features/buildings/buildingsSlice";
 import { RootState } from "../app/store/store";
 import {
   Building,
@@ -62,7 +62,7 @@ const BuildingDetailsPage = () => {
         const service = services.find((s) => s.id === serviceId) || null;
 
         return {
-          key: `apartment-${floor.id}-${apartment.id}`,
+          id: `apartment-${floor.id}-${apartment.id}`,
           floorNumber: floor.number,
           apartmentNumber: apartment.number,
           familyName: family?.name || "N/A",
@@ -77,35 +77,35 @@ const BuildingDetailsPage = () => {
     {
       title: "Floor Number",
       dataIndex: "floorNumber",
-      key: "floorNumber",
+      id: "floorNumber",
       sorter: (a: { floorNumber: number }, b: { floorNumber: number }) =>
         a.floorNumber - b.floorNumber,
     },
     {
       title: "Apartment Number",
       dataIndex: "apartmentNumber",
-      key: "apartmentNumber",
+      id: "apartmentNumber",
       sorter: (a: { apartmentNumber: number }, b: { apartmentNumber: number }) =>
         a.apartmentNumber - b.apartmentNumber,
     },
     {
       title: "Family Name",
       dataIndex: "familyName",
-      key: "familyName",
+      id: "familyName",
       sorter: (a: { familyName: string }, b: { familyName: string }) =>
         a.familyName.localeCompare(b.familyName),
     },
     {
       title: "Service Name",
       dataIndex: "serviceName",
-      key: "serviceName",
+      id: "serviceName",
       sorter: (a: { serviceName: string }, b: { serviceName: string }) =>
         a.serviceName.localeCompare(b.serviceName),
     },
     {
       title: "Partner Name",
       dataIndex: "partnerName",
-      key: "partnerName",
+      id: "partnerName",
       sorter: (a: { partnerName: string }, b: { partnerName: string }) =>
         a.partnerName.localeCompare(b.partnerName),
     },
@@ -118,7 +118,7 @@ const BuildingDetailsPage = () => {
       floors:
         values.floors?.map((floor: Floor, index: number) => ({
           ...floor,
-          number: index + 1, // Auto-assign floor number starting from 1
+          number: index + 1,
           apartments: floor.apartments?.map((apartment: Apartment) => ({
             ...apartment,
             family:
@@ -136,6 +136,13 @@ const BuildingDetailsPage = () => {
 
     dispatch(updateBuilding(updatedBuilding));
     setIsModalVisible(false);
+  };
+
+  const handleDelete = () => {
+    if (building?.id) {
+      dispatch(deleteBuilding(building.id));
+      navigate("/buildings");
+    }
   };
 
   return (
@@ -158,6 +165,16 @@ const BuildingDetailsPage = () => {
         <Button type="default" style={{ marginLeft: 8 }} onClick={() => setIsModalVisible(true)}>
           Edit
         </Button>
+        <Popconfirm
+          title="Are you sure to delete this building?"
+          onConfirm={handleDelete}
+          okText="Yes"
+          cancelText="No"
+        >
+          <Button danger style={{ marginLeft: 8 }}>
+            Delete
+          </Button>
+        </Popconfirm>
       </div>
 
       <DynamicForm
