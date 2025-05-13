@@ -7,7 +7,7 @@ import { ColumnsType } from "antd/es/table";
 import { addBuilding, updateBuilding, deleteBuilding } from "../features/buildings/buildingsSlice";
 import DynamicForm from "../components/DynamicForm";
 import { RootState } from "../app/store/store";
-import { Building, Family, Service, FormValues } from "../components/types";
+import { Building, Family, Service, FormValues, Apartment, Floor } from "../components/types";
 
 const BuildingsPage = () => {
   const dispatch = useDispatch();
@@ -17,7 +17,6 @@ const BuildingsPage = () => {
   const families = useSelector((state: RootState) => state.families.families);
   const services = useSelector((state: RootState) => state.services.services);
   const partners = useSelector((state: RootState) => state.partners.partners);
-
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [formMode, setFormMode] = useState<"add" | "edit">("add");
@@ -93,15 +92,21 @@ const BuildingsPage = () => {
       updatedAt: currentTimestamp,
       services: values.services || [],
       floors:
-        values.floors?.map((floor, index) => ({
+        values.floors?.map((floor: Floor, index: number) => ({
           id: floor.id || `${Date.now()}_${index}`,
           number: index + 1,
           apartments:
-            floor.apartments?.map((apartment, aptIndex) => ({
+            floor.apartments?.map((apartment: Apartment, aptIndex: number) => ({
               id: apartment.id || `${Date.now()}_${aptIndex}`,
               number: apartment.number,
-              family: apartment.family,
-              service: apartment.service,
+              family:
+                apartment.family && typeof apartment.family === "object"
+                  ? apartment.family.id
+                  : apartment.family,
+              service:
+                apartment.service && typeof apartment.service === "object"
+                  ? apartment.service.id
+                  : apartment.service,
             })) || [],
         })) || [],
     };
@@ -143,7 +148,28 @@ const BuildingsPage = () => {
         visible={isModalVisible}
         onCancel={handleCancel}
         onSubmit={handleFormSubmit}
-        initialValues={currentBuilding || { name: "", address: "", floors: [] }}
+        initialValues={
+          currentBuilding
+            ? {
+                ...currentBuilding,
+                floors: currentBuilding.floors?.map((floor, index) => ({
+                  ...floor,
+                  number: index + 1,
+                  apartments: floor.apartments?.map((apartment) => ({
+                    ...apartment,
+                    family:
+                      apartment.family && typeof apartment.family === "object"
+                        ? apartment.family.id
+                        : apartment.family,
+                    service:
+                      apartment.service && typeof apartment.service === "object"
+                        ? apartment.service.id
+                        : apartment.service,
+                  })),
+                })),
+              }
+            : { name: "", address: "", floors: [] }
+        }
         mode={formMode}
         title={formMode === "edit" ? "Edit Building" : "Add Building"}
         fields={[

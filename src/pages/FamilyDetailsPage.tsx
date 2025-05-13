@@ -1,7 +1,7 @@
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Card, Button, Table, Space, Popconfirm } from "antd";
-import { useState } from "react";
 import DynamicForm from "../components/DynamicForm";
 import { updateFamily, deleteFamily } from "../features/families/familiesSlice";
 import type { RootState } from "../app/store/store";
@@ -12,15 +12,20 @@ const FamilyDetailsPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const family = useSelector((state: RootState) =>
-    state.families.families.find((f) => f.id === id)
-  );
+  const families = useSelector((state: RootState) => state.families.families);
+  const services = useSelector((state: RootState) => state.services.services);
+  const partners = useSelector((state: RootState) => state.partners.partners);
+  const family = families.find((f) => f.id === id);
 
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
 
-  if (!family) {
-    return <p>Family not found!</p>;
-  }
+  useEffect(() => {
+    if (!family) {
+      navigate("/families");
+    }
+  }, [family, navigate]);
+
+  if (!family) return null; 
 
   const formatDate = (isoString?: string): string => {
     if (!isoString) return "N/A";
@@ -59,7 +64,7 @@ const FamilyDetailsPage = () => {
     navigate(`/families`);
   };
 
-  const columns = [
+  const memberColumns = [
     {
       title: "Full Name",
       dataIndex: "fullName",
@@ -136,7 +141,7 @@ const FamilyDetailsPage = () => {
             key: index,
             ...member,
           }))}
-          columns={columns}
+          columns={memberColumns}
           pagination={false}
         />
         <div style={{ marginTop: 16 }}>
@@ -188,9 +193,9 @@ const FamilyDetailsPage = () => {
             nested: true,
           },
         ]}
-        families={useSelector((state: RootState) => state.families.families)}
-        services={useSelector((state: RootState) => state.services.services)}
-        partners={useSelector((state: RootState) => state.partners.partners)}
+        families={families}
+        services={services}
+        partners={partners}
       />
     </div>
   );

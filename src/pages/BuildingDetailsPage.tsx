@@ -116,8 +116,9 @@ const BuildingDetailsPage = () => {
       ...building,
       ...values,
       floors:
-        values.floors?.map((floor: Floor) => ({
+        values.floors?.map((floor: Floor, index: number) => ({
           ...floor,
+          number: index + 1, // Auto-assign floor number starting from 1
           apartments: floor.apartments?.map((apartment: Apartment) => ({
             ...apartment,
             family:
@@ -130,6 +131,7 @@ const BuildingDetailsPage = () => {
                 : apartment.service,
           })),
         })) || [],
+      updatedAt: new Date().toISOString(),
     };
 
     dispatch(updateBuilding(updatedBuilding));
